@@ -78,7 +78,7 @@ am__quote = @am__quote@
 install_sh = @install_sh@
 
 #Build in these directories:
-SUBDIRS = librf UnitTest++ tests examples
+SUBDIRS = librf UnitTestPlusPlus tests examples
 EXTRA_DIST = autogen.sh
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
