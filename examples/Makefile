@@ -76,10 +76,10 @@ VERSION = 0.1
 am__include = include
 am__quote = 
 install_sh = /home2/blee/librf/install-sh
-bin_PROGRAMS = rftrain rfpredict
+bin_PROGRAMS = rftrain rfpredict rfvarimport
 rftrain_SOURCES = rf-train.cc
 rfpredict_SOURCES = rf-predict.cc
-
+rfvarimport_SOURCES = rf-varimport.cc
 INCLUDES = -I ../librf -I ../tclap
 LIBS = -L../librf -lrf
 CXXFLAGS = -DHAVE_SSTREAM -ggdb
@@ -87,7 +87,7 @@ subdir = examples
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
-bin_PROGRAMS = rftrain$(EXEEXT) rfpredict$(EXEEXT)
+bin_PROGRAMS = rftrain$(EXEEXT) rfpredict$(EXEEXT) rfvarimport$(EXEEXT)
 PROGRAMS = $(bin_PROGRAMS)
 
 am_rfpredict_OBJECTS = rf-predict.$(OBJEXT)
@@ -100,6 +100,11 @@ rftrain_OBJECTS = $(am_rftrain_OBJECTS)
 rftrain_LDADD = $(LDADD)
 rftrain_DEPENDENCIES =
 rftrain_LDFLAGS =
+am_rfvarimport_OBJECTS = rf-varimport.$(OBJEXT)
+rfvarimport_OBJECTS = $(am_rfvarimport_OBJECTS)
+rfvarimport_LDADD = $(LDADD)
+rfvarimport_DEPENDENCIES =
+rfvarimport_LDFLAGS =
 
 DEFS = -DHAVE_CONFIG_H
 DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)
@@ -108,15 +113,16 @@ LDFLAGS =
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
 DEP_FILES = ./$(DEPDIR)/rf-predict.Po \
-	./$(DEPDIR)/rf-train.Po
+	./$(DEPDIR)/rf-train.Po ./$(DEPDIR)/rf-varimport.Po
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 CXXLD = $(CXX)
 CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
 	-o $@
-DIST_SOURCES = $(rfpredict_SOURCES) $(rftrain_SOURCES)
+DIST_SOURCES = $(rfpredict_SOURCES) $(rftrain_SOURCES) \
+	$(rfvarimport_SOURCES)
 DIST_COMMON = Makefile.am Makefile.in
-SOURCES = $(rfpredict_SOURCES) $(rftrain_SOURCES)
+SOURCES = $(rfpredict_SOURCES) $(rftrain_SOURCES) $(rfvarimport_SOURCES)
 
 all: all-am
 
@@ -157,6 +163,9 @@ rfpredict$(EXEEXT): $(rfpredict_OBJECTS) $(rfpredict_DEPENDENCIES)
 rftrain$(EXEEXT): $(rftrain_OBJECTS) $(rftrain_DEPENDENCIES) 
 	@rm -f rftrain$(EXEEXT)
 	$(CXXLINK) $(rftrain_LDFLAGS) $(rftrain_OBJECTS) $(rftrain_LDADD) $(LIBS)
+rfvarimport$(EXEEXT): $(rfvarimport_OBJECTS) $(rfvarimport_DEPENDENCIES) 
+	@rm -f rfvarimport$(EXEEXT)
+	$(CXXLINK) $(rfvarimport_LDFLAGS) $(rfvarimport_OBJECTS) $(rfvarimport_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT) core *.core
@@ -166,6 +175,7 @@ distclean-compile:
 
 include ./$(DEPDIR)/rf-predict.Po
 include ./$(DEPDIR)/rf-train.Po
+include ./$(DEPDIR)/rf-varimport.Po
 
 distclean-depend:
 	-rm -rf ./$(DEPDIR)
