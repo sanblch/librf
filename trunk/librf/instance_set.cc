@@ -56,6 +56,8 @@ InstanceSet::InstanceSet(const string& csv_data,
   ifstream labels(label_file.c_str());
   load_labels(labels);
   create_sorted_indices();
+  assert(attributes_.size() > 0);
+  assert(attributes_[0].size() == labels_.size());
 }
 
 
@@ -127,24 +129,30 @@ void InstanceSet::create_dummy_var_names(int n) {
   }
 }
 
+/**
+ * Private constructor for creating an instance set
+ * from a libsvm file
+ *
+ */
 InstanceSet::InstanceSet(const string& filename, int num_features) : attributes_(num_features) {
-    // default to libsvm reading now
-    ifstream in(filename.c_str());
-    string line;
-    while(getline(in,line)) {
-       Instance i(line, num_features);
-       labels_.push_back(i.true_label);
-       distribution_.add(i.true_label);
-       // Add features into attributes list
-       for (int j = 0; j < num_features; ++j) {
-          attributes_[j].push_back(i.features_[j]);
-       }
+  ifstream in(filename.c_str());
+  string line;
+  while(getline(in,line)) {
+    Instance i(line, num_features);
+    labels_.push_back(i.true_label);
+    distribution_.add(i.true_label);
+    // Add features into attributes list
+    for (int j = 0; j < num_features; ++j) {
+      attributes_[j].push_back(i.features_[j]);
     }
-    cout << "InstanceSet Distribution:" << endl;
-    distribution_.print();
-   cout << "Sorting indices " << endl;
-    create_sorted_indices();
-    cout << "Instance Set loaded. " << endl;
+  }
+  // cout << "InstanceSet Distribution:" << endl;
+  // distribution_.print();
+  // cout << "Sorting indices " << endl;
+  // libsvm files do not have variable names
+  create_dummy_var_names(num_features);
+  create_sorted_indices();
+  // cout << "Instance Set loaded. " << endl;
 }
 
 void InstanceSet::create_sorted_indices() {
@@ -186,6 +194,11 @@ InstanceSet::InstanceSet(const InstanceSet& set,
   }
 }
 
+
+/**
+ * Permute method
+ * Used for variable importance
+ */
 void InstanceSet::permute(int var, unsigned int *seed) {
   vector<float>& attr = attributes_[var];
   for (int i = 0; i < attr.size(); ++i) {
