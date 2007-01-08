@@ -23,11 +23,11 @@ class InstanceSet {
     public:
         InstanceSet();
         static InstanceSet* create_subset(const InstanceSet&, const weight_list&);
-        static InstanceSet* load_from_csv_and_labels(const string& data,
+        static InstanceSet* load_csv_and_labels(const string& data,
                                                     const string& labels,
-                                                    bool header,
-                                                    const string& delim);
-        static InstanceSet* load_from_libsvm(const string& data,
+                                                    bool header = false,
+                                                    const string& delim =",");
+        static InstanceSet* load_libsvm(const string& data,
                                             int num_features);
         // copy a variable array out 
         void save_var(int var, vector<float> *target);
@@ -52,6 +52,9 @@ class InstanceSet {
         }
         float get_attribute(int i, int attr) const {
           return attributes_[attr][i];
+        }
+        string get_varname(int i) const {
+          return var_names_[i];
         }
         //float class_entropy() const{
         //  return distribution_.entropy_over_classes();

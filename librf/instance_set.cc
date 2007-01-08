@@ -18,7 +18,7 @@ InstanceSet::InstanceSet(){}
  * @param header whether there is a header with var. names
  * @param delim CSV delimiter - defaults to ','
  */
-InstanceSet* InstanceSet::load_from_csv_and_labels(const string& csv_data,
+InstanceSet* InstanceSet::load_csv_and_labels(const string& csv_data,
                                       const string& label_file,
                                       bool header,
                                       const string& delim) {
@@ -40,7 +40,7 @@ InstanceSet* InstanceSet::create_subset(const InstanceSet& set,
  * Named constructor for loading from a .libsvm format
  *
  */
-InstanceSet* InstanceSet::load_from_libsvm(const string& data, int nf) {
+InstanceSet* InstanceSet::load_libsvm(const string& data, int nf) {
   return new InstanceSet(data, nf);
 }
 
@@ -55,6 +55,7 @@ InstanceSet::InstanceSet(const string& csv_data,
 
   ifstream labels(label_file.c_str());
   load_labels(labels);
+  create_sorted_indices();
 }
 
 
@@ -100,9 +101,9 @@ void InstanceSet::load_csv(istream&in, bool header, const string& delim) {
     // reset istream
     in.seekg (0, ios::beg);
     // create dummy var names
-    create_dummy_var_names(num_features);
-    attributes_.resize(num_features);
   }
+  create_dummy_var_names(num_features);
+  attributes_.resize(num_features);
   // get all data
   while(getline(in, buffer)) {
     vector<string> ary;
