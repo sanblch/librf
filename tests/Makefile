@@ -38,10 +38,10 @@ pkglibdir = $(libdir)/librf
 pkgincludedir = $(includedir)/librf
 top_builddir = ..
 
-ACLOCAL = ${SHELL} /Users/benlee/Desktop/randomforest/googlecode/librf/missing --run aclocal-1.6
-AUTOCONF = ${SHELL} /Users/benlee/Desktop/randomforest/googlecode/librf/missing --run autoconf
-AUTOMAKE = ${SHELL} /Users/benlee/Desktop/randomforest/googlecode/librf/missing --run automake-1.6
-AUTOHEADER = ${SHELL} /Users/benlee/Desktop/randomforest/googlecode/librf/missing --run autoheader
+ACLOCAL = ${SHELL} /home2/blee/librf/missing --run aclocal-1.6
+AUTOCONF = ${SHELL} /home2/blee/librf/missing --run autoconf
+AUTOMAKE = ${SHELL} /home2/blee/librf/missing --run automake-1.6
+AUTOHEADER = ${SHELL} /home2/blee/librf/missing --run autoheader
 
 am__cd = CDPATH="$${ZSH_VERSION+.}$(PATH_SEPARATOR)" && cd
 INSTALL = /usr/bin/install -c
@@ -63,7 +63,7 @@ POST_UNINSTALL = :
 EXEEXT = 
 OBJEXT = o
 PATH_SEPARATOR = :
-AMTAR = ${SHELL} /Users/benlee/Desktop/randomforest/googlecode/librf/missing --run tar
+AMTAR = ${SHELL} /home2/blee/librf/missing --run tar
 AWK = gawk
 CC = gcc
 CXX = g++
@@ -75,7 +75,7 @@ STRIP =
 VERSION = 0.1
 am__include = include
 am__quote = 
-install_sh = /Users/benlee/Desktop/randomforest/googlecode/librf/install-sh
+install_sh = /home2/blee/librf/install-sh
 bin_PROGRAMS = unittests
 unittests_SOURCES = unittests.cc random_forest_unittest.cc instance_set_unittest.cc
 INCLUDES = -I ../UnitTestPlusPlus/includes -I ../librf
