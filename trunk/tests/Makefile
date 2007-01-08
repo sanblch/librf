@@ -38,10 +38,10 @@ pkglibdir = $(libdir)/librf
 pkgincludedir = $(includedir)/librf
 top_builddir = ..
 
-ACLOCAL = ${SHELL} /home2/blee/librf/missing --run aclocal-1.6
-AUTOCONF = ${SHELL} /home2/blee/librf/missing --run autoconf
-AUTOMAKE = ${SHELL} /home2/blee/librf/missing --run automake-1.6
-AUTOHEADER = ${SHELL} /home2/blee/librf/missing --run autoheader
+ACLOCAL = ${SHELL} /Users/benlee/Desktop/randomforest/googlecode/librf/missing --run aclocal-1.6
+AUTOCONF = ${SHELL} /Users/benlee/Desktop/randomforest/googlecode/librf/missing --run autoconf
+AUTOMAKE = ${SHELL} /Users/benlee/Desktop/randomforest/googlecode/librf/missing --run automake-1.6
+AUTOHEADER = ${SHELL} /Users/benlee/Desktop/randomforest/googlecode/librf/missing --run autoheader
 
 am__cd = CDPATH="$${ZSH_VERSION+.}$(PATH_SEPARATOR)" && cd
 INSTALL = /usr/bin/install -c
@@ -63,7 +63,7 @@ POST_UNINSTALL = :
 EXEEXT = 
 OBJEXT = o
 PATH_SEPARATOR = :
-AMTAR = ${SHELL} /home2/blee/librf/missing --run tar
+AMTAR = ${SHELL} /Users/benlee/Desktop/randomforest/googlecode/librf/missing --run tar
 AWK = gawk
 CC = gcc
 CXX = g++
@@ -75,9 +75,9 @@ STRIP =
 VERSION = 0.1
 am__include = include
 am__quote = 
-install_sh = /home2/blee/librf/install-sh
+install_sh = /Users/benlee/Desktop/randomforest/googlecode/librf/install-sh
 bin_PROGRAMS = unittests
-unittests_SOURCES = unittests.cc random_forest_unittest.cc
+unittests_SOURCES = unittests.cc random_forest_unittest.cc instance_set_unittest.cc
 INCLUDES = -I ../UnitTestPlusPlus/includes -I ../librf
 LIBS = -L../UnitTestPlusPlus -L../librf -lrf -lUnitTest++
 check_PROGRAMS = unittests
@@ -91,7 +91,8 @@ check_PROGRAMS = unittests$(EXEEXT)
 PROGRAMS = $(bin_PROGRAMS)
 
 am_unittests_OBJECTS = unittests.$(OBJEXT) \
-	random_forest_unittest.$(OBJEXT)
+	random_forest_unittest.$(OBJEXT) \
+	instance_set_unittest.$(OBJEXT)
 unittests_OBJECTS = $(am_unittests_OBJECTS)
 unittests_LDADD = $(LDADD)
 unittests_DEPENDENCIES =
@@ -103,7 +104,8 @@ CPPFLAGS =
 LDFLAGS = 
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
-DEP_FILES = ./$(DEPDIR)/random_forest_unittest.Po \
+DEP_FILES = ./$(DEPDIR)/instance_set_unittest.Po \
+	./$(DEPDIR)/random_forest_unittest.Po \
 	./$(DEPDIR)/unittests.Po
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
@@ -161,6 +163,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+include ./$(DEPDIR)/instance_set_unittest.Po
 include ./$(DEPDIR)/random_forest_unittest.Po
 include ./$(DEPDIR)/unittests.Po
 

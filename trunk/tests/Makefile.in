@@ -77,7 +77,7 @@ am__include = @am__include@
 am__quote = @am__quote@
 install_sh = @install_sh@
 bin_PROGRAMS = unittests
-unittests_SOURCES = unittests.cc random_forest_unittest.cc
+unittests_SOURCES = unittests.cc random_forest_unittest.cc instance_set_unittest.cc
 INCLUDES = -I ../UnitTestPlusPlus/includes -I ../librf
 LIBS = -L../UnitTestPlusPlus -L../librf -lrf -lUnitTest++
 check_PROGRAMS = unittests
@@ -91,7 +91,8 @@ check_PROGRAMS = unittests$(EXEEXT)
 PROGRAMS = $(bin_PROGRAMS)
 
 am_unittests_OBJECTS = unittests.$(OBJEXT) \
-	random_forest_unittest.$(OBJEXT)
+	random_forest_unittest.$(OBJEXT) \
+	instance_set_unittest.$(OBJEXT)
 unittests_OBJECTS = $(am_unittests_OBJECTS)
 unittests_LDADD = $(LDADD)
 unittests_DEPENDENCIES =
@@ -103,7 +104,8 @@ CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
-@AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/random_forest_unittest.Po \
+@AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/instance_set_unittest.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/random_forest_unittest.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/unittests.Po
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
@@ -161,6 +163,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/instance_set_unittest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/random_forest_unittest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/unittests.Po@am__quote@
 
