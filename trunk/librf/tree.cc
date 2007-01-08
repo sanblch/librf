@@ -516,7 +516,7 @@ void Tree::print_node(int n) const{
 
 void Tree::variable_importance(map<int, float>* score, unsigned int* seed) const{
   // build subset
-  InstanceSet subset(set_, *weight_list_);
+  InstanceSet* subset = InstanceSet::create_subset(set_, *weight_list_);
   // get the oob accuracy before we start
   float oob_acc = oob_accuracy();
   // loop through every variable that this tree ACTUALLY USES
@@ -525,15 +525,16 @@ void Tree::variable_importance(map<int, float>* score, unsigned int* seed) const
     int var = *it;
     // make a backup copy of the variable 
     vector<float> backup;
-    subset.save_var(var, &backup);
+    subset->save_var(var, &backup);
     // shuffle the values in this variable around
-    subset.permute(var, seed);
-    float permuted_acc = testing_accuracy(subset);
+    subset->permute(var, seed);
+    float permuted_acc = testing_accuracy(*subset);
     // decrease in accuracy!
     (*score)[var] = oob_acc - permuted_acc;
     // restore the proper stuff
-    subset.load_var(*it, backup);
+    subset->load_var(*it, backup);
   }
+  delete subset;
 }
 
 } //namespace

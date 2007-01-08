@@ -10,7 +10,7 @@ using namespace librf;
 struct RF_TrainPredictFixture {
   RF_TrainPredictFixture() {
     cout << "loading heart data" << endl;
-    heart_ = new InstanceSet("../data/heart.svm", 14);
+    heart_ = InstanceSet::load_from_libsvm("../data/heart.svm", 14);
   }
   ~RF_TrainPredictFixture() {
     delete heart_;
@@ -21,8 +21,8 @@ struct RF_TrainPredictFixture {
 TEST_FIXTURE(RF_TrainPredictFixture, TrainPredictCheck) {
 
   RandomForest rf(*heart_, 10, 12, 12);
-  rf.print();
- cout << "Training accuracy " << rf.training_accuracy() <<endl;
+  // rf.print();
+  cout << "Training accuracy " << rf.training_accuracy() <<endl;
   cout << "OOB Accuracy " << rf.oob_accuracy() <<endl;
   cout << "Test accuracy " << rf.testing_accuracy(*heart_) <<endl;
   ofstream out("out.test");

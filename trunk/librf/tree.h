@@ -86,6 +86,8 @@ class Tree {
         int build_node(uint16 node_num, uint16 min_size);
         void print_node(int n) const;
 
+        // inline convenience functions for
+        // traversing nodes
         uint32 parent(uint32 node_num) const {
           return uint32(floor((node_num - 1) / 2.0));
         }
@@ -95,7 +97,9 @@ class Tree {
         uint32 right_child(uint32 node_num) const {
           return 2 * node_num + 2;
         }
+
         void permuteOOB(int m, double *x);
+
         vector<tree_node> nodes_;
         vector<uint16> active_nodes_;
         set<uint16> vars_used_;
@@ -111,7 +115,7 @@ class Tree {
         // uint16 * sorted_inum_;
         //
         // Turns out there is not much of a gain in batch allocating the
-        // 2d array (perhaps because, we only access a single  column at a time)
+        // 2d array (perhaps because, we only access a single column at a time)
         uint16** sorted_inum_;
         // label population 
         // uchar * sorted_labels_; necessary?

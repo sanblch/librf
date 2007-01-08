@@ -1,3 +1,7 @@
+/**
+ * @file
+ * @brief random forest implementation
+ */
 #include "librf/random_forest.h"
 #include "librf/tree.h"
 #include "librf/instance_set.h"
@@ -8,6 +12,12 @@
 namespace librf {
 
 RandomForest::RandomForest() : set_(InstanceSet()) {}
+/**
+ * @param set training data
+ * @param num_trees #trees to train
+ * @param K #random vars to consider at each split
+ * @param max
+ */
 RandomForest::RandomForest(const InstanceSet& set,
                            int num_trees,
                            int K,
