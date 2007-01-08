@@ -75,6 +75,23 @@ int RandomForest::predict(const InstanceSet& set, int instance_no) const {
   return votes.mode();
 }
 
+
+
+float RandomForest::predict_prob(const InstanceSet& set, int instance_no, int label) const {
+  // Gather the votes from each tree
+  DiscreteDist votes;
+  for (int i = 0; i < trees_.size(); ++i) {
+    int predict = trees_[i]->predict(set, instance_no);
+    votes.add(predict);
+  }
+  int count = votes.weight(label);
+  return float(count) / trees_.size();
+}
+
+
+
+
+
 float RandomForest::oob_accuracy() const {
   weight_list correct(set_.size(), set_.size());
   weight_list incorrect(set_.size(), set_.size());
