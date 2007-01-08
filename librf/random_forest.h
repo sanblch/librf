@@ -31,11 +31,13 @@ class RandomForest {
                  int max_depth);
     ~RandomForest();
      /// Method to predict the label
-     int predict(const Instance& c) const;
+     // int predict(const Instance& c) const;
      /// Method that returns the class probability 
-     float predict_prob(const Instance& c) const;
+     // float predict_prob(const Instance& c) const;
      /// Method to predict the label
      int predict(const InstanceSet& set, int instance_no) const;
+     /// Predict probability of given label
+     float predict_prob(const InstanceSet& set, int instance_no, int label) const;
      /// Returns test accuracy of a labeled test set
      float testing_accuracy(const InstanceSet& testset) const;
      /// Returns training accuracy 
