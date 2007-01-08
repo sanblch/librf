@@ -12,17 +12,17 @@ int main(int argc, char*argv[]) {
   try {
     CmdLine cmd("rf-train", ' ', "0.1");
     ValueArg<string>  dataArg("d", "data",
-                                   "Training Data", true, "", "string");
+                                   "Training Data", true, "", "trainingdata");
     ValueArg<string> modelArg("m", "model",
-                              "Model file output", true, "", "string");
+                              "Model file output", true, "", "rfmodel");
     ValueArg<int> numfeaturesArg("f", "features", "# features", true,
                                  -1, "int");
     ValueArg<int> treesArg("t", "trees", "# Trees", false, 10, "int");
     ValueArg<int> kArg("k", "vars", "# vars per tree", false,
                                  10, "int");
+    cmd.add(numfeaturesArg);
     cmd.add(dataArg);
     cmd.add(modelArg);
-    cmd.add(numfeaturesArg);
     cmd.add(treesArg);
     cmd.add(kArg);
 
@@ -33,13 +33,14 @@ int main(int argc, char*argv[]) {
     int num_features = numfeaturesArg.getValue();
     int num_trees = treesArg.getValue();
 
-    InstanceSet set(datafile, num_features);
-    RandomForest rf(set, num_trees, K, 12);
+    InstanceSet* set = InstanceSet::load_libsvm(datafile, num_features);
+    RandomForest rf(*set, num_trees, K, 12);
     cout << "Training Accuracy " << rf.training_accuracy() << endl;
     cout << "OOB Accuracy " << rf.oob_accuracy() << endl;
     ofstream out(modelfile.c_str());
     rf.write(out);
     cout << "Model file saved to " << modelfile << endl;
+    delete set;
   }
   catch (TCLAP::ArgException &e)  // catch any exceptions 
   {

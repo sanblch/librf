@@ -12,25 +12,26 @@ int main(int argc, char*argv[]) {
   try {
     CmdLine cmd("rf-predict", ' ', "0.1");
     ValueArg<string>  dataArg("d", "data",
-                                   "Training Data", true, "", "string");
+                                   "Training Data", true, "", "testdata");
     ValueArg<string> modelArg("m", "model",
-                              "Model file output", true, "", "string");
+                              "Model file output", true, "", "rfmodel");
 
     ValueArg<int> numfeaturesArg("f", "features", "# features", true,
                                  -1, "int");
+    cmd.add(numfeaturesArg);
     cmd.add(dataArg);
     cmd.add(modelArg);
-    cmd.add(numfeaturesArg);
     cmd.parse(argc, argv);
     string datafile = dataArg.getValue();
     string modelfile = modelArg.getValue();
     int num_features = numfeaturesArg.getValue();
 
-    InstanceSet set(datafile, num_features);
+    InstanceSet* set = InstanceSet::load_libsvm(datafile, num_features);
     RandomForest rf;
     ifstream in(modelfile.c_str());
     rf.read(in);
-    rf.testing_accuracy(set);
+    cout << "Test accuracy: " << rf.testing_accuracy(*set) << endl;;
+    delete set;
   }
   catch (TCLAP::ArgException &e)  // catch any exceptions 
   {
