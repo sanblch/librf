@@ -13,7 +13,7 @@ namespace librf {
 InstanceSet::InstanceSet(){}
 /***
  * Named constructor for loading from a csv file and a label file
- *
+ * Makes simpler to have a separate label file.
  * @param csv_data CSV filename
  * @param header whether there is a header with var. names
  * @param delim CSV delimiter - defaults to ','
@@ -38,7 +38,8 @@ InstanceSet* InstanceSet::create_subset(const InstanceSet& set,
 
 /**
  * Named constructor for loading from a .libsvm format
- *
+ * @param data filename 
+ * @param nf number of features (makes life easier to specify this)
  */
 InstanceSet* InstanceSet::load_libsvm(const string& data, int nf) {
   return new InstanceSet(data, nf);

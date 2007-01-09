@@ -1,3 +1,8 @@
+/**
+ * @file
+ * @brief Tree implementation
+ * 
+ */
 #include "librf/tree.h"
 #include "librf/instance_set.h"
 #include "librf/discrete_dist.h"
@@ -26,7 +31,16 @@ Tree::Tree(istream& in):
 {
   read(in);
 }
-
+/**
+ * Constructor
+ * @param set training set
+ * @param weights weights --- presumably from bagging process
+ * @param K number of vars to try per split
+ * @param max_depth (to be deprecated)
+ * @param min_size minimum number of instances in a node
+ * @param min_gain minimum information gain for making a split
+ * @param seed random seed
+ */
 Tree::Tree(const InstanceSet& set,
            weight_list* weights,
            int K,
@@ -49,7 +63,10 @@ Tree::Tree(const InstanceSet& set,
   assert(max_depth_ != 0);
   nodes_.resize(1<<max_depth_);
 }
-
+/***
+ * Copy the sorted indices from the training set
+ * into our special matrix (sorted_inum)
+ */
 void Tree::copy_instances() {
   sorted_inum_ = new uint16*[num_attributes_];
   for (int i = 0; i <num_attributes_; ++i) {
@@ -63,6 +80,13 @@ void Tree::copy_instances() {
   move_left = new uchar[num_instances_];
 }
 
+
+/**
+ * Do the work of growing the tree
+ * - Copy the data into special matrix
+ * - Build the tree
+ * - Delete special matrix
+ */
 void Tree::grow() {
   copy_instances();
   build_tree(min_size_);
@@ -75,7 +99,6 @@ void Tree::grow() {
   }
   delete [] temp;
   delete [] move_left;
-
 }
 
 
@@ -84,7 +107,7 @@ Tree::~Tree() {
 }
 
 
-/* Save a tree to disk
+/** Save a tree to disk
  * Important things to record:
  *    - Nodes (all active nodes need to be written)
  *    - WeightList ? - this seems irrelevant without the instance set
@@ -102,6 +125,9 @@ void Tree::write(ostream& o) const {
   }
 }
 
+/**
+ * Read the tree from disk
+ */
 void Tree::read(istream& in) {
   string spacer;
   int num_active_nodes;
@@ -194,8 +220,10 @@ int Tree::build_node(uint16 node_num, uint16 min_size) {
     uint16 right_size = n->size - left_size;
     assert(left_child(node_num) < nodes_.size());
     assert(right_child(node_num) < nodes_.size());
-    mark_build(&nodes_[left_child(node_num)], n->start, left_size, n->depth);
-    mark_build(&nodes_[right_child(node_num)], split_idx + 1, right_size, n->depth);
+    mark_build(&nodes_[left_child(node_num)],
+               n->start, left_size, n->depth);
+    mark_build(&nodes_[right_child(node_num)],
+               split_idx + 1, right_size, n->depth);
     nodes_created = 2;
    } else {
     // cout << "couldn't find a split" << endl;

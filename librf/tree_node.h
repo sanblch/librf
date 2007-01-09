@@ -2,7 +2,6 @@
  * tree_node.h
  * @file
  * @brief structure for a single node in a decision tree 
- * @author Ben Lee
  */
 
 #ifndef _TREE_NODE_H_

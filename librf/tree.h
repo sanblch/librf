@@ -1,21 +1,8 @@
 /**
- * tree.h
- * 
- * A single decision tree
+ * @file 
+ * @brief A single decision tree
  * The implementation is a port of the Fortran implementation. 
- * Strategy:
- *  Binary tree in a fixed size array
- *      #leaves is bounded by #instances!
- *  Sorted instances kept in an special matrix
- *  such that:
- *      Each node has a contiguous group of rows in the matrix
- *      Each column gives the sorted instance order with respect
- *          to a feature
- *
- * Trees can only be created in two ways:
- *  1) load from a saved model
- *  2) grown from a certain bagging of a dataset 
- *
+*
  */
 
 #ifndef _TREE_H_
@@ -36,20 +23,40 @@ class weight_list;
 class DiscreteDist;
 class Instance;
 
+/**
+ * @brief
+ * A single decision tree
+ *
+ *
+ *
+ * Strategy:
+ *  - Binary tree in a fixed size array
+ *    - #leaves is bounded by #instances!
+ *  - Sorted instances kept in an special matrix such that:
+ *    - Each node has a contiguous group of rows in the matrix
+ *    - Each column gives the sorted instance order with respect
+ *          to a feature
+ *
+ * Trees can only be created in two ways:
+ *  -# load from a saved model
+ *  -# grown from a certain bagging of a dataset 
+ 
+*/
 class Tree {
     public:
-        // Construct a new tree by loading it from a file
+        /// Construct a new tree by loading it from a file
         Tree(istream& in);
-        // Construct a new tree by training
+        /// Construct a new tree by training
         Tree(const InstanceSet& set, weight_list* weights,
              int K, uchar max_depth=16, int min_size = 1,
              float min_gain = 0, unsigned int seed =0);
          ~Tree();  // clean up 
-        // predict a new instance
+        /// predict a new instance
         int predict(const Instance& c) const;
-        // predict an instance from a set
+        /// predict an instance from a set
         int predict(const InstanceSet& set, int instance_no) const;
         // void write_dot(const string& s) const;
+        /// Return the accuracy for the training set
         float training_accuracy() const;
         // predict all the instances in testset and return the accuracy
         float testing_accuracy(const InstanceSet& testset) const;
