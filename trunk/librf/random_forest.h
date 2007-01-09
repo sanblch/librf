@@ -51,6 +51,7 @@ class RandomForest {
      void read(istream& i);
      /// Save random forest
      void write(ostream& o);
+     /// Debug output
      void print() const;
   private:
     const InstanceSet& set_; // training data set

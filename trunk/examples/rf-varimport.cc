@@ -11,6 +11,7 @@ int main(int argc, char*argv[]) {
   // Check arguments
   try {
     CmdLine cmd("rf-varimport", ' ', "0.1");
+    SwitchArg headerFlag("","header","CSV file has a var name header",false);
     ValueArg<string>  dataArg("d", "data",
                                    "Training Data", true, "", "trainingdata");
     ValueArg<string>  labelsArg("l", "labels",
@@ -18,6 +19,9 @@ int main(int argc, char*argv[]) {
     ValueArg<int> treesArg("t", "trees", "# Trees", false, 10, "int");
     ValueArg<int> kArg("k", "vars", "# vars per tree", false,
                                  10, "int");
+    ValueArg<string> delimArg("","delim","CSV delimiter", false,",","delimiter");
+    cmd.add(headerFlag);
+    cmd.add(delimArg);
     cmd.add(dataArg);
     cmd.add(labelsArg);
     cmd.add(treesArg);
@@ -26,10 +30,13 @@ int main(int argc, char*argv[]) {
     cmd.parse(argc, argv);
     string datafile = dataArg.getValue();
     string labelfile = labelsArg.getValue();
+    string delim = delimArg.getValue();
+    bool header = headerFlag.getValue();
     int K = kArg.getValue();
     int num_trees = treesArg.getValue();
 
-    InstanceSet* set = InstanceSet::load_csv_and_labels(datafile, labelfile, true);
+    InstanceSet* set = InstanceSet::load_csv_and_labels(datafile, labelfile, header, delim);
+    cout << " Read in " << set->num_attributes() << " attrs." << endl;
     RandomForest rf(*set, num_trees, K, 12);
     unsigned int seed = 1;
     vector< pair<float, int> > scores;

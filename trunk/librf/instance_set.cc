@@ -94,11 +94,11 @@ void InstanceSet::load_csv(istream&in, bool header, const string& delim) {
   string buffer;
   getline(in, buffer);
   if (header) {
-    StringUtils::split(buffer, &var_names_);
+    StringUtils::split(buffer, &var_names_, delim);
     num_features = var_names_.size();
   } else {
     vector<string> ary;
-    StringUtils::split(buffer, &ary);
+    StringUtils::split(buffer, &ary, delim);
     num_features = ary.size();
     // reset istream
     in.seekg (0, ios::beg);
@@ -109,7 +109,7 @@ void InstanceSet::load_csv(istream&in, bool header, const string& delim) {
   // get all data
   while(getline(in, buffer)) {
     vector<string> ary;
-    StringUtils::split(buffer, &ary);
+    StringUtils::split(buffer, &ary, delim);
     assert(ary.size() == num_features);
     for (int i = 0; i < ary.size(); ++i) {
       stringstream ss(ary[i]);
