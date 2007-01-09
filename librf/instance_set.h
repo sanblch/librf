@@ -2,8 +2,8 @@
  * @file
  * @brief Instance Set
  * This is the abstraction for a data set
- * -- Currently libSVM
- * -- want to support CSV, ARFF
+ * -- Currently libSVM, CSV
+ * -- want to support ARFF
  */
 #ifndef _INSTANCE_SET_H_
 #define _INSTANCE_SET_H_
@@ -18,23 +18,33 @@ using namespace std;
 namespace librf {
 
 class weight_list;
-
+/**
+ * @brief
+ * InstanceSet class. Interface for loading training/testing data.
+ */
 class InstanceSet {
     public:
+        /// Empty constructor
         InstanceSet();
+        /// Named constructor - create a subset from an existing instanceset
         static InstanceSet* create_subset(const InstanceSet&, const weight_list&);
+        /// Named constructor - load from csv file and a label file
         static InstanceSet* load_csv_and_labels(const string& data,
                                                     const string& labels,
                                                     bool header = false,
                                                     const string& delim =",");
+        /// Load from a libsvm formatted file
         static InstanceSet* load_libsvm(const string& data,
                                             int num_features);
-        // copy a variable array out 
+        /// copy a variable array out 
         void save_var(int var, vector<float> *target);
+        /// load a variable array in
         void load_var(int var, const vector<float>&);
-        // permute a variable's instances (shuffle)
+        /// permute a variable's instances (shuffle)
         void permute(int var, unsigned int * seed);
+        /// sort the variables 
         void create_sorted_indices();
+        /// Sorted indices (available after create_sorted_indices)
         const vector<int>& get_sorted_indices(int attribute) const{
             return sorted_indices_[attribute];
         }

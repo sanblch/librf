@@ -16,7 +16,8 @@ RandomForest::RandomForest() : set_(InstanceSet()) {}
  * @param set training data
  * @param num_trees #trees to train
  * @param K #random vars to consider at each split
- * @param max
+ * @param max_depth this param should be deprecated (depth is limited by
+ * number of instances)
  */
 RandomForest::RandomForest(const InstanceSet& set,
                            int num_trees,
