@@ -48,21 +48,28 @@ class InstanceSet {
         const vector<int>& get_sorted_indices(int attribute) const{
             return sorted_indices_[attribute];
         }
+        /// Most common label
         int mode_label() const {
           return distribution_.mode();
         }
+        /// Get a particular instance's label
         unsigned char label(int i) const{
           return labels_[i];
         }
+        /// Number of instances
         unsigned int size() const {
             return labels_.size();
         }
+        /// Number of attributes
         unsigned int num_attributes() const {
           return attributes_.size();
         }
+        /// Get a particular instance's attribute
         float get_attribute(int i, int attr) const {
           return attributes_[attr][i];
         }
+        /// Get a variable name (useful if there is a header with var
+        //names)
         string get_varname(int i) const {
           return var_names_[i];
         }
