@@ -28,6 +28,8 @@ class InstanceSet {
         InstanceSet();
         /// Named constructor - create a subset from an existing instanceset
         static InstanceSet* create_subset(const InstanceSet&, const weight_list&);
+        /// Named constructor - feature selection
+        static InstanceSet* feature_select(const InstanceSet&, const vector<int>&);
         /// Named constructor - load from csv file and a label file
         static InstanceSet* load_csv_and_labels(const string& data,
                                                     const string& labels,
@@ -84,6 +86,8 @@ class InstanceSet {
         InstanceSet(const string& filename, int num);
         /// Get a subset of an existing instance set
         InstanceSet(const InstanceSet&, const weight_list&);
+        /// Feature select from existing instance set
+        InstanceSet(const InstanceSet&, const vector<int>&);
         void load_labels(istream& in);
         void load_csv(istream& in, bool header, const string& delim);
         void load_svm(istream& in);

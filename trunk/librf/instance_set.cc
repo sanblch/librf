@@ -62,7 +62,33 @@ InstanceSet::InstanceSet(const string& csv_data,
 }
 
 
+/**
+ * Named constructor for feature selection 
+ * @param set existing InstanceSet
+ * @param attrs attributes/features wanted 
+ */
+InstanceSet* InstanceSet::feature_select(const InstanceSet& set,
+                                      const vector<int>& attrs) {
+  return new InstanceSet(set, attrs);
+}
 
+/**
+ * Private constructor for feature selection
+ */
+InstanceSet::InstanceSet(const InstanceSet& set,
+                         const vector<int>& attrs) {
+  // Copy labels
+  labels_ = set.labels_;
+  // Only copy given attrs
+  attributes_.resize(attrs.size());
+  sorted_indices_.resize(attrs.size());
+  var_names_.resize(attrs.size());
+  for (int i = 0; i < attrs.size(); ++i) {
+    attributes_[i] = set.attributes_[attrs[i]];
+    sorted_indices_[i] = set.sorted_indices_[attrs[i]];
+    var_names_[i] = set.var_names_[attrs[i]];
+  }
+}
 /***
  * Load labels from an istream
  *

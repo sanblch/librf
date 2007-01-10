@@ -30,7 +30,7 @@ TEST_FIXTURE(TreeFixture, TrainCheck)
    for (int i = 0; i < 8; ++i) {
      weights2->add(i);
    }
-   Tree tree(*is_, weights2, 12, 14);
+   Tree tree(*is_, weights2, 12);
    tree.grow();
    tree.print();
    cout << "running prediction on training set" <<endl;
@@ -66,7 +66,7 @@ TEST_FIXTURE(TreeFixtureBig, BigCheck) {
   }
   cout << "Training..." <<endl;
   Tree *tree = new Tree(*is_,
-                         weights2, 12, 16);
+                         weights2, 12);
   tree->grow();
   cout << "Training accuracy: " << tree->training_accuracy() << endl;
   tree->print();

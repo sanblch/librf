@@ -48,7 +48,7 @@ class Tree {
         Tree(istream& in);
         /// Construct a new tree by training
         Tree(const InstanceSet& set, weight_list* weights,
-             int K, uchar max_depth=16, int min_size = 1,
+             int K, int min_size = 1,
              float min_gain = 0, unsigned int seed =0);
          ~Tree();  // clean up 
         /// predict a new instance
@@ -116,7 +116,7 @@ class Tree {
         // A single weight list for all of the instances 
         weight_list* weight_list_;
         // Depth of current tree
-        uint16 max_depth_;
+        // uint16 max_depth_; DEPRECATE?
         uint16 K_;
         uint16 min_size_;
         float min_gain_;
