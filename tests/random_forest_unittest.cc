@@ -22,7 +22,7 @@ struct RF_TrainPredictFixture {
 
 TEST_FIXTURE(RF_TrainPredictFixture, TrainPredictCheck) {
 
-  RandomForest rf(*heart_, 100, 12, 12);
+  RandomForest rf(*heart_, 100, 12);
   // rf.print();
   cout << "Training accuracy " << rf.training_accuracy() <<endl;
   cout << "OOB Accuracy " << rf.oob_accuracy() <<endl;

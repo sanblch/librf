@@ -41,7 +41,6 @@ Tree::Tree(istream& in):
  * @param set training set
  * @param weights weights --- presumably from bagging process
  * @param K number of vars to try per split
- * @param max_depth (to be deprecated) ?
  * @param min_size minimum number of instances in a node
  * @param min_gain minimum information gain for making a split
  * @param seed random seed
@@ -49,14 +48,12 @@ Tree::Tree(istream& in):
 Tree::Tree(const InstanceSet& set,
            weight_list* weights,
            int K,
-           uchar max_depth,
            int min_size,
            float min_gain,
            unsigned int seed
            ) :
                              set_(set),
                              weight_list_(weights),
-                             max_depth_(max_depth - 1),
                              K_(K),
                              min_size_(min_size),
                              min_gain_(min_gain),
@@ -65,7 +62,6 @@ Tree::Tree(const InstanceSet& set,
                              split_nodes_(0), terminal_nodes_(0),
                              rand_seed_(seed)
 {
-  assert(max_depth_ != 0);
 }
 /***
  * Copy the sorted indices from the training set
@@ -118,8 +114,7 @@ Tree::~Tree() {
  *    - Statistics? 
  */
 void Tree::write(ostream& o) const {
-  assert(max_depth_ != 0);
-  o << "Tree: " << nodes_.size() << " " << max_depth_ <<  endl;
+  o << "Tree: " << nodes_.size() << endl;
   // Loop through active nodes
   for (int i = 0; i < nodes_.size(); ++i) {
     // Write the node number
@@ -134,7 +129,7 @@ void Tree::write(ostream& o) const {
 void Tree::read(istream& in) {
   string spacer;
   int num_nodes;
-  in >> spacer >> num_nodes >> max_depth_;
+  in >> spacer >> num_nodes;
   nodes_.resize( num_nodes);
   for (int i = 0; i < num_nodes; ++i) {
     int cur_node;
@@ -209,7 +204,7 @@ void Tree::build_node(uint16 node_num, uint16 min_size) {
   n->label = d.mode();
 
   // Min_size or completely pure check
-  if (n->size <= min_size || n->entropy == 0 || n->depth >= (max_depth_ -1)) {
+  if (n->size <= min_size || n->entropy == 0) { //|| n->depth >= (max_depth_ -1)) {
     mark_terminal(n);
     /* if (n->size <= min_size) {
        cout << "terminal due to size of " << n->size << endl;

@@ -51,7 +51,7 @@ int main(int argc, char*argv[]) {
     } else {
       set = InstanceSet::load_csv_and_labels(datafile, labelfile, header, delim);
     }
-    RandomForest rf(*set, num_trees, K, 1000);
+    RandomForest rf(*set, num_trees, K);
     cout << "Training Accuracy " << rf.training_accuracy() << endl;
     cout << "OOB Accuracy " << rf.oob_accuracy() << endl;
     ofstream out(modelfile.c_str());

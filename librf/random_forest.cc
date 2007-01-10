@@ -16,15 +16,11 @@ RandomForest::RandomForest() : set_(InstanceSet()) {}
  * @param set training data
  * @param num_trees #trees to train
  * @param K #random vars to consider at each split
- * @param max_depth this param should be deprecated (depth is limited by
  * number of instances)
  */
 RandomForest::RandomForest(const InstanceSet& set,
                            int num_trees,
-                           int K,
-                           int max_depth) :set_(set),
-                                           K_(K),
-                                           max_depth_(max_depth){
+                           int K) :set_(set), K_(K) {
   // cout << "RandomForest Constructor " << num_trees << endl;
   for (int i = 0; i < num_trees; ++i) {
     weight_list* w = new weight_list(set.size(), set.size());
@@ -32,7 +28,7 @@ RandomForest::RandomForest(const InstanceSet& set,
     for (int j = 0; j < set.size(); ++j) {
       w->add(rand()%set.size());
     }
-    Tree* tree = new Tree(set, w,  K, max_depth, 1, 0, rand());
+    Tree* tree = new Tree(set, w,  K, 1, 0, rand());
     tree->grow();
     // cout << "Grew tree " << i << endl;
     trees_.push_back(tree);
@@ -52,15 +48,15 @@ void RandomForest::print() const {
 }
 
 void RandomForest::write(ostream& o) {
-  o << trees_.size() << " " << K_ << " " << max_depth_ << endl;
+  o << trees_.size() << " " << K_ << endl;
   for (int i = 0; i < trees_.size(); ++i) {
     trees_[i]->write(o);
   }
 }
 
 void RandomForest::read(istream& in) {
-  int num_trees, K, max_depth;
-  in >> num_trees >> K >> max_depth;
+  int num_trees, K;
+  in >> num_trees >> K;
   for (int i = 0; i < num_trees; ++i) {
     trees_.push_back(new Tree(in));
   }

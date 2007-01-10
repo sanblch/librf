@@ -27,8 +27,7 @@ class RandomForest {
     /// Constructor. (Build from training data)
     RandomForest(const InstanceSet& set,
                  int num_trees,
-                 int K,
-                 int max_depth);
+                 int K);
     ~RandomForest();
      /// Method to predict the label
      // int predict(const Instance& c) const;
@@ -54,10 +53,11 @@ class RandomForest {
      /// Debug output
      void print() const;
   private:
-    const InstanceSet& set_; // training data set
-    vector<Tree*> trees_; // component trees in the forest
-    int max_depth_; // maximum depth of trees
-    int K_; // random vars to try per split
+    const InstanceSet& set_;  // training data set
+    vector<Tree*> trees_;     // component trees in the forest
+    // int max_depth_;           // maximum depth of trees (DEPRECATED)
+    int K_;                   // random vars to try per split
+    vector< pair<float, int> > var_ranking_; // cached var_ranking
 };
 
 } // namespace
