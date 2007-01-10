@@ -85,28 +85,15 @@ class Tree {
                                       float* best_gain);
 
         // Node marking
-        void mark_build(tree_node* n, uint16 start, uint16 size, uchar depth);
+        void add_node(uint16 start, uint16 size, uchar depth);
         void mark_terminal(tree_node* n);
         void mark_split(tree_node* n, uint16 split_attr, float split_point);
 
         void build_tree(int min_size);
-        int build_node(uint16 node_num, uint16 min_size);
+        void build_node(uint16 node_num, uint16 min_size);
         void print_node(int n) const;
 
-        // inline convenience functions for
-        // traversing nodes
-        uint32 parent(uint32 node_num) const {
-          return uint32(floor((node_num - 1) / 2.0));
-        }
-        uint32 left_child(uint32 node_num) const {
-          return 2 * node_num + 1;
-        }
-        uint32 right_child(uint32 node_num) const {
-          return 2 * node_num + 2;
-        }
-
         void permuteOOB(int m, double *x);
-
         vector<tree_node> nodes_;
         vector<uint16> active_nodes_;
         set<uint16> vars_used_;

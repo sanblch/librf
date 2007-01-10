@@ -178,7 +178,6 @@ void InstanceSet::sort_attribute(const vector<float>& attribute,
 }
 
 // Grab a subset of the instance (for getting OOB data
-// Seems like maybe this should be a static named constructor
 InstanceSet::InstanceSet(const InstanceSet& set,
                          const weight_list& weights) : attributes_(set.num_attributes()){
   // Calculate the number of OOB cases
