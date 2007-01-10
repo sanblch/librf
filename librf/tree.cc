@@ -1,7 +1,12 @@
 /**
  * @file
  * @brief Tree implementation
- * 
+ * TODO: fix nodes to be contiguous
+ * use ncur idea
+ * if current node is split
+ * last_node +1 (left)
+ * last_node +2 (right)
+ * ncur+=2
  */
 #include "librf/tree.h"
 #include "librf/instance_set.h"
@@ -36,7 +41,7 @@ Tree::Tree(istream& in):
  * @param set training set
  * @param weights weights --- presumably from bagging process
  * @param K number of vars to try per split
- * @param max_depth (to be deprecated)
+ * @param max_depth (to be deprecated) ?
  * @param min_size minimum number of instances in a node
  * @param min_gain minimum information gain for making a split
  * @param seed random seed
@@ -61,7 +66,6 @@ Tree::Tree(const InstanceSet& set,
                              rand_seed_(seed)
 {
   assert(max_depth_ != 0);
-  nodes_.resize(1<<max_depth_);
 }
 /***
  * Copy the sorted indices from the training set
@@ -115,13 +119,12 @@ Tree::~Tree() {
  */
 void Tree::write(ostream& o) const {
   assert(max_depth_ != 0);
-  o << "Tree: " << active_nodes_.size() << " " << max_depth_ << endl;
+  o << "Tree: " << nodes_.size() << " " << max_depth_ <<  endl;
   // Loop through active nodes
-  for (int i = 0; i < active_nodes_.size(); ++i) {
-    int cur_node = active_nodes_[i];
+  for (int i = 0; i < nodes_.size(); ++i) {
     // Write the node number
-    o << cur_node << " ";
-    nodes_[cur_node].write(o);
+    o << i << " ";
+    nodes_[i].write(o);
   }
 }
 
@@ -130,29 +133,28 @@ void Tree::write(ostream& o) const {
  */
 void Tree::read(istream& in) {
   string spacer;
-  int num_active_nodes;
-  in >> spacer >> num_active_nodes >> max_depth_;
-  nodes_.resize( 1 << max_depth_);
-  for (int i = 0; i < num_active_nodes; ++i) {
+  int num_nodes;
+  in >> spacer >> num_nodes >> max_depth_;
+  nodes_.resize( num_nodes);
+  for (int i = 0; i < num_nodes; ++i) {
     int cur_node;
     in >> cur_node;
-    active_nodes_.push_back(cur_node);
     nodes_[cur_node].read(in);
   }
 }
 
 
 void Tree::build_tree(int min_size) {
-  int cur_node =0;
-  int front = 0;
+  int built_nodes = 0;
   // set up ROOT NODE
-  nodes_[cur_node].status = BUILD_ME;
-  nodes_[cur_node].depth = 0;
-  nodes_[cur_node].start = 0;
-  nodes_[cur_node].size = num_instances_;
-  active_nodes_.push_back(cur_node);
-  // do while there are unhandled splits (pre-order traversal)
-  while(front < active_nodes_.size()) {
+  // Root contains all the instances
+  add_node(0, num_instances_, 0);
+  do {
+    build_node(built_nodes, min_size_);
+    built_nodes++;
+  } while (built_nodes < nodes_.size());
+
+/*  while(front < active_nodes_.size()) {
     cur_node = active_nodes_[front++];
     assert (cur_node < nodes_.size());
     tree_node *node = &nodes_[cur_node];
@@ -161,7 +163,7 @@ void Tree::build_tree(int min_size) {
       active_nodes_.push_back(left_child(cur_node));
       active_nodes_.push_back(right_child(cur_node));
     }
-   }
+   } */
 }
 
 void Tree::mark_terminal(tree_node* n) {
@@ -173,22 +175,26 @@ void Tree::mark_split(tree_node* n, uint16 split_attr, float split_point) {
   n->status = SPLIT;
   n->attr = split_attr;
   n->split_point = split_point;
+  n->left = nodes_.size(); // last_node + 1 (due to zero indexing)
+  n->right = nodes_.size() + 1; // last_node +2 
   split_nodes_++;
   vars_used_.insert(split_attr);
 }
 
 
-void Tree::mark_build(tree_node* n, uint16 start,
-                      uint16 size, uchar depth) {
-  n->status = BUILD_ME;
-  n->start = start;
-  n->size = size;
-  n->depth = depth + 1;
+void Tree::add_node(uint16 start, uint16 size, uchar depth) {
+  tree_node n;
+  n.status = BUILD_ME;
+  n.start = start;
+  n.size = size;
+  n.depth = depth;
+  nodes_.push_back(n);
 }
 
-int Tree::build_node(uint16 node_num, uint16 min_size) {
+void Tree::build_node(uint16 node_num, uint16 min_size) {
   // cout << "building node " << node_num <<endl;
   uint16 nodes_created = 0;
+  assert(node_num < nodes_.size());
   tree_node* n = &nodes_[node_num];
   // Calculate starting entropy
   DiscreteDist d;
@@ -205,7 +211,14 @@ int Tree::build_node(uint16 node_num, uint16 min_size) {
   // Min_size or completely pure check
   if (n->size <= min_size || n->entropy == 0 || n->depth >= (max_depth_ -1)) {
     mark_terminal(n);
-    return nodes_created;
+    /* if (n->size <= min_size) {
+       cout << "terminal due to size of " << n->size << endl;
+    } else if (n->entropy==0) {
+      cout << "terminal due to zero entropy" << endl;
+    } else  {
+      cout << "terminal due to depth: " << int(n->depth) << endl;
+    }*/
+    return;
   }
 
   int split_attr, split_idx;
@@ -218,18 +231,12 @@ int Tree::build_node(uint16 node_num, uint16 min_size) {
     move_data(n, split_attr, split_idx);
     uint16 left_size = split_idx - n->start + 1;
     uint16 right_size = n->size - left_size;
-    assert(left_child(node_num) < nodes_.size());
-    assert(right_child(node_num) < nodes_.size());
-    mark_build(&nodes_[left_child(node_num)],
-               n->start, left_size, n->depth);
-    mark_build(&nodes_[right_child(node_num)],
-               split_idx + 1, right_size, n->depth);
-    nodes_created = 2;
+    add_node(n->start, left_size, n->depth + 1);
+    add_node(split_idx + 1, right_size, n->depth + 1);
    } else {
     // cout << "couldn't find a split" << endl;
     mark_terminal(n);
    }
-  return nodes_created;
 }
 
 void Tree::move_data(tree_node* n, uint16 split_attr, uint16 split_idx) {
@@ -475,9 +482,9 @@ int Tree::predict(const InstanceSet& set, int instance_no) const {
       label = n->label;
     } else {
       if (set.get_attribute(instance_no, n->attr) < n->split_point) {
-        cur_node = left_child(cur_node);
+        cur_node = n->left;
       } else {
-        cur_node = right_child(cur_node);
+        cur_node = n->right;
       }
     }
   }
@@ -533,11 +540,18 @@ float Tree::testing_accuracy(const InstanceSet& set) const {
 void Tree::print() const {
   int cur_node = 0;
   print_node(cur_node);
+  cout << "Training acc: " << training_accuracy() << endl;
+  int nonzero = 0;
+  for (int i = 0; i < set_.size(); ++i) {
+    if ((*weight_list_)[i] != 0)
+        nonzero++;
+  }
+  cout << "nonzero instances: " << nonzero << endl;
 }
 
 void Tree::print_node(int n) const{
   const tree_node& node = nodes_[n];
-  cout << "Tree with " << active_nodes_.size() << " nodes " << endl;
+  cout << "Tree with " << nodes_.size() << " nodes " << endl;
   cout << "Split nodes: " << split_nodes_ <<endl;
   cout << "Terminal nodes: " << terminal_nodes_ << endl;
 }

@@ -51,12 +51,13 @@ int main(int argc, char*argv[]) {
     } else {
       set = InstanceSet::load_csv_and_labels(datafile, labelfile, header, delim);
     }
-    RandomForest rf(*set, num_trees, K, 12);
+    RandomForest rf(*set, num_trees, K, 1000);
     cout << "Training Accuracy " << rf.training_accuracy() << endl;
     cout << "OOB Accuracy " << rf.oob_accuracy() << endl;
     ofstream out(modelfile.c_str());
     rf.write(out);
     cout << "Model file saved to " << modelfile << endl;
+    // rf.print();
     delete set;
   }
   catch (TCLAP::ArgException &e)  // catch any exceptions 

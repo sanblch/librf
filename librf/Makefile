@@ -38,10 +38,10 @@ pkglibdir = $(libdir)/librf
 pkgincludedir = $(includedir)/librf
 top_builddir = ..
 
-ACLOCAL = ${SHELL} /Users/benlee/Desktop/librf/missing --run aclocal-1.6
-AUTOCONF = ${SHELL} /Users/benlee/Desktop/librf/missing --run autoconf
-AUTOMAKE = ${SHELL} /Users/benlee/Desktop/librf/missing --run automake-1.6
-AUTOHEADER = ${SHELL} /Users/benlee/Desktop/librf/missing --run autoheader
+ACLOCAL = ${SHELL} /home2/blee/librf/missing --run aclocal-1.6
+AUTOCONF = ${SHELL} /home2/blee/librf/missing --run autoconf
+AUTOMAKE = ${SHELL} /home2/blee/librf/missing --run automake-1.6
+AUTOHEADER = ${SHELL} /home2/blee/librf/missing --run autoheader
 
 am__cd = CDPATH="$${ZSH_VERSION+.}$(PATH_SEPARATOR)" && cd
 INSTALL = /usr/bin/install -c
@@ -63,7 +63,7 @@ POST_UNINSTALL = :
 EXEEXT = 
 OBJEXT = o
 PATH_SEPARATOR = :
-AMTAR = ${SHELL} /Users/benlee/Desktop/librf/missing --run tar
+AMTAR = ${SHELL} /home2/blee/librf/missing --run tar
 AWK = gawk
 CC = gcc
 CXX = g++
@@ -75,12 +75,13 @@ STRIP =
 VERSION = 0.1
 am__include = include
 am__quote = 
-install_sh = /Users/benlee/Desktop/librf/install-sh
+install_sh = /home2/blee/librf/install-sh
 
 noinst_LIBRARIES = librf.a
 librf_a_SOURCES = librf.h random_forest.h tree.h types.h tree_node.h instance.h instance_set.h weights.h discrete_dist.h utils.h random_forest.cc instance_set.cc discrete_dist.cc tree.cc tree_node.cc weights.cc
 
 INCLUDES = -I$(top_srcdir)
+CXXFLAGS = -ggdb
 subdir = librf
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
@@ -110,7 +111,6 @@ CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 CXXLD = $(CXX)
 CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
 	-o $@
-CXXFLAGS = -g -O2
 CFLAGS = -g -O2
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
@@ -308,7 +308,6 @@ uninstall-am: uninstall-info-am
 	mostlyclean-generic tags uninstall uninstall-am \
 	uninstall-info-am
 
-#CXXFLAGS = -ggdb
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

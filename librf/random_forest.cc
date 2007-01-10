@@ -32,7 +32,7 @@ RandomForest::RandomForest(const InstanceSet& set,
     for (int j = 0; j < set.size(); ++j) {
       w->add(rand()%set.size());
     }
-    Tree* tree = new Tree(set, w,  K, max_depth);
+    Tree* tree = new Tree(set, w,  K, max_depth, 1, 0, rand());
     tree->grow();
     // cout << "Grew tree " << i << endl;
     trees_.push_back(tree);
