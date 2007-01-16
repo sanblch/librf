@@ -112,6 +112,28 @@ void InstanceSet::load_labels(istream&in) {
     distribution_.add(true_label);
   }
 }
+
+/**
+ *
+ */
+void InstanceSet::write_csv(ostream& out, bool header,
+                            const string& delim) {
+  if (header) {
+    for (int i = 0; i < num_attributes() - 1; ++i) {
+      out <<  var_names_[i] << delim;
+    }
+    out << var_names[num_attributes() - 1] << endl;
+  }
+  for (int i = 0; i < size(); ++i) {
+    for (int j = 0; j < num_attributes() - 1; ++i) {
+      out << attributes_[j][i] << delim;
+    }
+    out << attributes_[num_attributes() - 1][i] << endl;
+  }
+}
+
+
+
 /***
  * Load csv from an istream
  */
