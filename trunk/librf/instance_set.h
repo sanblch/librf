@@ -90,6 +90,7 @@ class InstanceSet {
         InstanceSet(const InstanceSet&, const vector<int>&);
         void load_labels(istream& in);
         void load_csv(istream& in, bool header, const string& delim);
+        void write_csv(ostream& out, bool header, const string& delim);
         void load_svm(istream& in);
         void create_dummy_var_names(int n);
         void sort_attribute(const vector<float>&attribute, vector<int>*indices);
