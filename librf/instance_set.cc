@@ -122,10 +122,12 @@ void InstanceSet::write_csv(ostream& out, bool header,
     for (int i = 0; i < num_attributes() - 1; ++i) {
       out <<  var_names_[i] << delim;
     }
-    out << var_names[num_attributes() - 1] << endl;
+    out << var_names_[num_attributes() - 1] << endl;
   }
-  for (int i = 0; i < size(); ++i) {
-    for (int j = 0; j < num_attributes() - 1; ++i) {
+  assert(attributes_.size() > 0);
+  assert(attributes_[0].size() > 0);
+  for (int i = 0; i < attributes_[0].size(); ++i) {
+    for (int j = 0; j < num_attributes() - 1; ++j) {
       out << attributes_[j][i] << delim;
     }
     out << attributes_[num_attributes() - 1][i] << endl;

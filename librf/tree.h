@@ -55,13 +55,14 @@ class Tree {
         int predict(const Instance& c) const;
         /// predict an instance from a set
         int predict(const InstanceSet& set, int instance_no) const;
+        int predict(const InstanceSet& set, int instance_no, vector<pair<int, float> >*) const;
         // void write_dot(const string& s) const;
         /// Return the accuracy for the training set
         float training_accuracy() const;
         // predict all the instances in testset and return the accuracy
         float testing_accuracy(const InstanceSet& testset) const;
         float oob_accuracy() const;
-        void oob_cases(weight_list* counts, weight_list* correct) const;
+        void oob_predictions(vector<DiscreteDist> *) const;
 
         void variable_importance(map<int, float>* scores, unsigned int* seed) const;
         void print() const;
@@ -95,7 +96,6 @@ class Tree {
 
         void permuteOOB(int m, double *x);
         vector<tree_node> nodes_;
-        vector<uint16> active_nodes_;
         set<uint16> vars_used_;
         uint16 terminal_nodes_;
         uint16 split_nodes_;
@@ -107,6 +107,7 @@ class Tree {
         // which node
         // ex: sorted_inum_[attr*stride + start]
         // uint16 * sorted_inum_;
+        // uint16 stride_;
         //
         // Turns out there is not much of a gain in batch allocating the
         // 2d array (perhaps because, we only access a single column at a time)
@@ -125,7 +126,6 @@ class Tree {
         uchar* move_left;
         uint16 num_instances_;
         uint16 num_attributes_;
-        uint16 stride_;
         unsigned int rand_seed_;
         // Constants
         static const int kLeft;

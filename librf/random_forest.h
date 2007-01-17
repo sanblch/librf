@@ -11,7 +11,7 @@
 using namespace std;
 
 namespace librf {
-
+class DiscreteDist;
 class Instance;
 class InstanceSet;
 class Tree;
@@ -27,7 +27,8 @@ class RandomForest {
     /// Constructor. (Build from training data)
     RandomForest(const InstanceSet& set,
                  int num_trees,
-                 int K);
+                 int K,
+                 const vector<int>& weights = vector<int>());
     ~RandomForest();
      /// Method to predict the label
      // int predict(const Instance& c) const;
@@ -35,14 +36,20 @@ class RandomForest {
      // float predict_prob(const Instance& c) const;
      /// Method to predict the label
      int predict(const InstanceSet& set, int instance_no) const;
+
+     /// Special logging method to predict the label
+     int predict(const InstanceSet& set, int instance_no, vector<pair<int, float> >*) const;
+
      /// Predict probability of given label
      float predict_prob(const InstanceSet& set, int instance_no, int label) const;
      /// Returns test accuracy of a labeled test set
      float testing_accuracy(const InstanceSet& testset) const;
      /// Returns training accuracy 
      float training_accuracy() const;
+     void oob_predictions(vector<DiscreteDist>* predicts) const;
      /// Returns OOB accuracy (unbiased estimate of test accuracy)
      float oob_accuracy() const;
+     void oob_confusion() const;
      /// Variable importance ranking of features
      void variable_importance(vector< pair<float, int> >* ranking,
                               unsigned int* seed) const;
@@ -58,6 +65,7 @@ class RandomForest {
     // int max_depth_;           // maximum depth of trees (DEPRECATED)
     int K_;                   // random vars to try per split
     vector< pair<float, int> > var_ranking_; // cached var_ranking
+    vector<int> class_weights_;
 };
 
 } // namespace
