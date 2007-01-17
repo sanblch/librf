@@ -15,16 +15,16 @@ namespace librf {
 
 class DiscreteDist {
   public:
-    DiscreteDist(int size = 2) : sum_(0), size_(size)
+    DiscreteDist(int size = 2) : sum_(0), size_(size),counter_(size, 0)
     {
-      counter_ = new unsigned int[size];
-      for (int i =0; i < size; ++i) {
-        counter_[i] = 0;
-      }
+      //counter_ = new unsigned int[size];
+      //for (int i =0; i < size; ++i) {
+      //  counter_[i] = 0;
+      //}
     }
-    ~DiscreteDist() {
-      delete [] counter_;
-    }
+    /*~DiscreteDist() {
+      //delete [] counter_;
+    }*/
     void add(int value, unsigned int weight=1) {
       counter_[value] += weight;
       sum_ += weight;
@@ -133,7 +133,8 @@ class DiscreteDist {
 				return num * log(num);
 			}
 		}
-    unsigned int* counter_;
+    vector<unsigned int> counter_;
+    //unsigned int* counter_;
 };
 } // namespace
 #endif

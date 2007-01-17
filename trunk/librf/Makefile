@@ -81,6 +81,7 @@ noinst_LIBRARIES = librf.a
 librf_a_SOURCES = librf.h random_forest.h tree.h types.h tree_node.h instance.h instance_set.h weights.h discrete_dist.h utils.h random_forest.cc instance_set.cc discrete_dist.cc tree.cc tree_node.cc weights.cc
 
 INCLUDES = -I$(top_srcdir)
+CXXFLAGS = -ggdb
 subdir = librf
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
@@ -110,14 +111,13 @@ CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 CXXLD = $(CXX)
 CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
 	-o $@
-CXXFLAGS = -g -O2
 CFLAGS = -g -O2
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 DIST_SOURCES = $(librf_a_SOURCES)
-DIST_COMMON = Makefile.am Makefile.in
+DIST_COMMON = Makefile.am Makefile.in TODO
 SOURCES = $(librf_a_SOURCES)
 
 all: all-am
@@ -308,7 +308,6 @@ uninstall-am: uninstall-info-am
 	mostlyclean-generic tags uninstall uninstall-am \
 	uninstall-info-am
 
-#CXXFLAGS = -ggdb
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

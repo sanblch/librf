@@ -10,6 +10,7 @@
 
 #include <string>
 #include <vector>
+#include <fstream>
 #include "librf/instance.h"
 #include "librf/discrete_dist.h"
 
@@ -75,6 +76,7 @@ class InstanceSet {
         string get_varname(int i) const {
           return var_names_[i];
         }
+        void write_csv(ostream& out, bool header, const string& delim);
         //float class_entropy() const{
         //  return distribution_.entropy_over_classes();
         //}
@@ -90,7 +92,6 @@ class InstanceSet {
         InstanceSet(const InstanceSet&, const vector<int>&);
         void load_labels(istream& in);
         void load_csv(istream& in, bool header, const string& delim);
-        void write_csv(ostream& out, bool header, const string& delim);
         void load_svm(istream& in);
         void create_dummy_var_names(int n);
         void sort_attribute(const vector<float>&attribute, vector<int>*indices);

@@ -82,6 +82,7 @@ INCLUDES = -I ../UnitTestPlusPlus/includes -I ../librf
 LIBS = -L../UnitTestPlusPlus -L../librf -lrf -lUnitTest++
 check_PROGRAMS = unittests
 TESTS = unittests
+CXXFLAGS = -ggdb
 subdir = tests
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
@@ -112,7 +113,6 @@ CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 CXXLD = $(CXX)
 CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
 	-o $@
-CXXFLAGS = -g -O2
 DIST_SOURCES = $(unittests_SOURCES)
 DIST_COMMON = Makefile.am Makefile.in
 SOURCES = $(unittests_SOURCES)

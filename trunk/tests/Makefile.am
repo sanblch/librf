@@ -4,3 +4,4 @@ INCLUDES = -I ../UnitTestPlusPlus/includes -I ../librf
 LIBS = -L../UnitTestPlusPlus -L../librf -lrf -lUnitTest++
 check_PROGRAMS = unittests
 TESTS = unittests
+CXXFLAGS = -ggdb

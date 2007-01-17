@@ -51,9 +51,12 @@ int main(int argc, char*argv[]) {
     } else {
       set = InstanceSet::load_csv_and_labels(datafile, labelfile, header, delim);
     }
-    RandomForest rf(*set, num_trees, K);
+    // vector<int> weights;
+    RandomForest rf(*set, num_trees, K); //, weights);
     cout << "Training Accuracy " << rf.training_accuracy() << endl;
     cout << "OOB Accuracy " << rf.oob_accuracy() << endl;
+    cout << "---Confusion Matrix----" << endl;
+    rf.oob_confusion();
     ofstream out(modelfile.c_str());
     rf.write(out);
     cout << "Model file saved to " << modelfile << endl;

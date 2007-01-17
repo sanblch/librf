@@ -58,7 +58,8 @@ Tree::Tree(const InstanceSet& set,
                              min_size_(min_size),
                              min_gain_(min_gain),
                              num_attributes_(set.num_attributes()),
-                             num_instances_(set.size()), stride_(set.size()),
+                             num_instances_(set.size()),
+                             // stride_(set.size()),
                              split_nodes_(0), terminal_nodes_(0),
                              rand_seed_(seed)
 {
@@ -141,24 +142,12 @@ void Tree::read(istream& in) {
 
 void Tree::build_tree(int min_size) {
   int built_nodes = 0;
-  // set up ROOT NODE
-  // Root contains all the instances
+  // set up ROOT NODE (constains all instances)
   add_node(0, num_instances_, 0);
   do {
     build_node(built_nodes, min_size_);
     built_nodes++;
   } while (built_nodes < nodes_.size());
-
-/*  while(front < active_nodes_.size()) {
-    cur_node = active_nodes_[front++];
-    assert (cur_node < nodes_.size());
-    tree_node *node = &nodes_[cur_node];
-    assert(node->status == BUILD_ME);
-    if (build_node(cur_node, min_size_) > 0) {
-      active_nodes_.push_back(left_child(cur_node));
-      active_nodes_.push_back(right_child(cur_node));
-    }
-   } */
 }
 
 void Tree::mark_terminal(tree_node* n) {
@@ -486,6 +475,40 @@ int Tree::predict(const InstanceSet& set, int instance_no) const {
   return label;
 }
 
+
+
+/***
+ * Special logging predict method
+ * Will track which split variables and split points were used
+ */
+int Tree::predict(const InstanceSet& set, int instance_no,
+                  vector<pair<int, float> > * nodes) const {
+  //base case
+  bool result = false;
+  int cur_node = 0;
+  int label = 0;
+  while (!result) {
+    const tree_node* n = &nodes_[cur_node];
+    assert(n->status == TERMINAL || n->status == SPLIT);
+    if (n->status == TERMINAL) {
+      result = true;
+      label = n->label;
+    } else {
+      nodes->push_back(make_pair(n->attr, n->split_point));
+      if (set.get_attribute(instance_no, n->attr) < n->split_point) {
+        cur_node = n->left;
+      } else {
+        cur_node = n->right;
+      }
+    }
+  }
+  return label;
+}
+
+
+
+
+
 float Tree::oob_accuracy () const{
   int correct = 0;
   int total = 0;
@@ -500,15 +523,11 @@ float Tree::oob_accuracy () const{
   return float(correct) / total;
 }
 
-void Tree::oob_cases(weight_list* correct, weight_list* incorrect) const{
+void Tree::oob_predictions(vector<DiscreteDist>* predicts) const{
   // Loop through training set looking for instances with weight 0
   for (int i =0; i < num_instances_; ++i) {
     if ((*weight_list_)[i] ==0) {
-      if (predict(set_, i) == set_.label(i)) {
-        correct->add(i);
-      } else {
-        incorrect->add(i);
-      }
+      (*predicts)[i].add(predict(set_,i));
     }
   }
 }

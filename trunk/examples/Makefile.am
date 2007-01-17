@@ -1,7 +1,9 @@
-bin_PROGRAMS =  rftrain rfpredict rfvarimport
+bin_PROGRAMS =  rftrain rfpredict rfvarimport featuresel adaptivetest
 rftrain_SOURCES = rf-train.cc
 rfpredict_SOURCES = rf-predict.cc
 rfvarimport_SOURCES = rf-varimport.cc
+featuresel_SOURCES = rf-featuresel.cc
+adaptivetest_SOURCES = adaptivetest.cc
 INCLUDES =  -I ../librf -I ../tclap
 LIBS =  -L../librf -lrf
 CXXFLAGS = -DHAVE_SSTREAM #-ggdb

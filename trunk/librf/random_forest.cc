@@ -20,13 +20,20 @@ RandomForest::RandomForest() : set_(InstanceSet()) {}
  */
 RandomForest::RandomForest(const InstanceSet& set,
                            int num_trees,
-                           int K) :set_(set), K_(K) {
+                           int K,
+                           const vector<int>& weights) :set_(set), K_(K) {
+  if (weights.size() == 0) {
+    class_weights_.resize(2, 1); //HARDCODE
+  } else {
+    class_weights_ = weights;
+  }
   // cout << "RandomForest Constructor " << num_trees << endl;
   for (int i = 0; i < num_trees; ++i) {
     weight_list* w = new weight_list(set.size(), set.size());
     // sample with replacement
     for (int j = 0; j < set.size(); ++j) {
-      w->add(rand()%set.size());
+      int instance = rand() % set.size();
+      w->add(instance, class_weights_[set.label(instance)]);
     }
     Tree* tree = new Tree(set, w,  K, 1, 0, rand());
     tree->grow();
@@ -72,6 +79,17 @@ int RandomForest::predict(const InstanceSet& set, int instance_no) const {
   return votes.mode();
 }
 
+int RandomForest::predict(const InstanceSet& set, int instance_no,
+                          vector<pair<int, float> >*nodes) const {
+  // Gather the votes from each tree
+  DiscreteDist votes;
+  for (int i = 0; i < trees_.size(); ++i) {
+    int predict = trees_[i]->predict(set, instance_no, nodes);
+    votes.add(predict);
+  }
+  return votes.mode();
+}
+
 
 
 float RandomForest::predict_prob(const InstanceSet& set, int instance_no, int label) const {
@@ -86,23 +104,46 @@ float RandomForest::predict_prob(const InstanceSet& set, int instance_no, int la
 }
 
 
-
+void RandomForest::oob_predictions(vector<DiscreteDist>* predicts) const{
+  predicts->resize(set_.size(),DiscreteDist(2));
+  for (int i = 0; i < trees_.size(); ++i) {
+    trees_[i]->oob_predictions(predicts);
+  }
+}
 
 
 float RandomForest::oob_accuracy() const {
-  weight_list correct(set_.size(), set_.size());
-  weight_list incorrect(set_.size(), set_.size());
-
-  for (int i = 0; i < trees_.size(); ++i) {
-    trees_[i]->oob_cases(&correct, &incorrect);
-  }
+  vector<DiscreteDist> predicts;
+  oob_predictions(&predicts);
   int total = 0;
   for (int i = 0; i < set_.size(); ++i) {
-    if (correct[i] > incorrect[i]) {
+    if (predicts[i].mode() == set_.label(i)) {
       total++;
     }
   }
   return float(total)/set_.size();
+}
+
+void RandomForest::oob_confusion() const {
+  vector<DiscreteDist> predicts;
+  oob_predictions(&predicts);
+  vector< vector<int> > matrix;
+  //HARDCODED
+  //TODO: FIX
+  int num_labels = 2;
+  matrix.resize(num_labels);
+  for (int i = 0; i < num_labels; ++i) {
+    matrix[i].resize(num_labels, 0);
+  }
+  for (int i = 0; i < set_.size(); ++i) {
+    matrix[set_.label(i)][predicts[i].mode()]++;
+  }
+  for (int i = 0; i < num_labels; ++i) {
+    for (int j = 0; j < num_labels; ++j) {
+      cout << matrix[i][j] << " ";
+    }
+    cout <<endl;
+  }
 }
 
 /*

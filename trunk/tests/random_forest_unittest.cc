@@ -26,6 +26,7 @@ TEST_FIXTURE(RF_TrainPredictFixture, TrainPredictCheck) {
   // rf.print();
   cout << "Training accuracy " << rf.training_accuracy() <<endl;
   cout << "OOB Accuracy " << rf.oob_accuracy() <<endl;
+  rf.oob_confusion();
   cout << "Test accuracy " << rf.testing_accuracy(*heart_) <<endl;
   ofstream out("out.test");
   cout <<"save test" << endl;

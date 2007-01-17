@@ -76,10 +76,12 @@ VERSION = @VERSION@
 am__include = @am__include@
 am__quote = @am__quote@
 install_sh = @install_sh@
-bin_PROGRAMS = rftrain rfpredict rfvarimport
+bin_PROGRAMS = rftrain rfpredict rfvarimport featuresel adaptivetest
 rftrain_SOURCES = rf-train.cc
 rfpredict_SOURCES = rf-predict.cc
 rfvarimport_SOURCES = rf-varimport.cc
+featuresel_SOURCES = rf-featuresel.cc
+adaptivetest_SOURCES = adaptivetest.cc
 INCLUDES = -I ../librf -I ../tclap
 LIBS = -L../librf -lrf
 CXXFLAGS = -DHAVE_SSTREAM #-ggdb
@@ -87,9 +89,20 @@ subdir = examples
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
-bin_PROGRAMS = rftrain$(EXEEXT) rfpredict$(EXEEXT) rfvarimport$(EXEEXT)
+bin_PROGRAMS = rftrain$(EXEEXT) rfpredict$(EXEEXT) rfvarimport$(EXEEXT) \
+	featuresel$(EXEEXT) adaptivetest$(EXEEXT)
 PROGRAMS = $(bin_PROGRAMS)
 
+am_adaptivetest_OBJECTS = adaptivetest.$(OBJEXT)
+adaptivetest_OBJECTS = $(am_adaptivetest_OBJECTS)
+adaptivetest_LDADD = $(LDADD)
+adaptivetest_DEPENDENCIES =
+adaptivetest_LDFLAGS =
+am_featuresel_OBJECTS = rf-featuresel.$(OBJEXT)
+featuresel_OBJECTS = $(am_featuresel_OBJECTS)
+featuresel_LDADD = $(LDADD)
+featuresel_DEPENDENCIES =
+featuresel_LDFLAGS =
 am_rfpredict_OBJECTS = rf-predict.$(OBJEXT)
 rfpredict_OBJECTS = $(am_rfpredict_OBJECTS)
 rfpredict_LDADD = $(LDADD)
@@ -112,17 +125,19 @@ CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
-@AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/rf-predict.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/rf-train.Po ./$(DEPDIR)/rf-varimport.Po
+@AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/adaptivetest.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/rf-featuresel.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/rf-predict.Po ./$(DEPDIR)/rf-train.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/rf-varimport.Po
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 CXXLD = $(CXX)
 CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
 	-o $@
-DIST_SOURCES = $(rfpredict_SOURCES) $(rftrain_SOURCES) \
-	$(rfvarimport_SOURCES)
-DIST_COMMON = Makefile.am Makefile.in
-SOURCES = $(rfpredict_SOURCES) $(rftrain_SOURCES) $(rfvarimport_SOURCES)
+DIST_SOURCES = $(adaptivetest_SOURCES) $(featuresel_SOURCES) \
+	$(rfpredict_SOURCES) $(rftrain_SOURCES) $(rfvarimport_SOURCES)
+DIST_COMMON = Makefile.am Makefile.in TODO
+SOURCES = $(adaptivetest_SOURCES) $(featuresel_SOURCES) $(rfpredict_SOURCES) $(rftrain_SOURCES) $(rfvarimport_SOURCES)
 
 all: all-am
 
@@ -157,6 +172,12 @@ uninstall-binPROGRAMS:
 
 clean-binPROGRAMS:
 	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
+adaptivetest$(EXEEXT): $(adaptivetest_OBJECTS) $(adaptivetest_DEPENDENCIES) 
+	@rm -f adaptivetest$(EXEEXT)
+	$(CXXLINK) $(adaptivetest_LDFLAGS) $(adaptivetest_OBJECTS) $(adaptivetest_LDADD) $(LIBS)
+featuresel$(EXEEXT): $(featuresel_OBJECTS) $(featuresel_DEPENDENCIES) 
+	@rm -f featuresel$(EXEEXT)
+	$(CXXLINK) $(featuresel_LDFLAGS) $(featuresel_OBJECTS) $(featuresel_LDADD) $(LIBS)
 rfpredict$(EXEEXT): $(rfpredict_OBJECTS) $(rfpredict_DEPENDENCIES) 
 	@rm -f rfpredict$(EXEEXT)
 	$(CXXLINK) $(rfpredict_LDFLAGS) $(rfpredict_OBJECTS) $(rfpredict_LDADD) $(LIBS)
@@ -173,6 +194,8 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/adaptivetest.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rf-featuresel.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rf-predict.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rf-train.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rf-varimport.Po@am__quote@

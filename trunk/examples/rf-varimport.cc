@@ -20,6 +20,8 @@ int main(int argc, char*argv[]) {
     ValueArg<int> kArg("k", "vars", "# vars per tree", false,
                                  10, "int");
     ValueArg<string> delimArg("","delim","CSV delimiter", false,",","delimiter");
+    ValueArg<string> outArg("o","output","outputfile", true, "ranking", "output");
+    cmd.add(outArg);
     cmd.add(headerFlag);
     cmd.add(delimArg);
     cmd.add(dataArg);
@@ -31,6 +33,7 @@ int main(int argc, char*argv[]) {
     string datafile = dataArg.getValue();
     string labelfile = labelsArg.getValue();
     string delim = delimArg.getValue();
+    string outfile = outArg.getValue();
     bool header = headerFlag.getValue();
     int K = kArg.getValue();
     int num_trees = treesArg.getValue();
@@ -41,8 +44,10 @@ int main(int argc, char*argv[]) {
     unsigned int seed = 1;
     vector< pair<float, int> > scores;
     rf.variable_importance(&scores, &seed);
+    ofstream out(outfile.c_str());
     for (int i = 0; i < scores.size(); ++i) {
-      cout << set->get_varname(scores[i].second) << ":" << scores[i].first <<endl;
+      // cout << set->get_varname(scores[i].second) << ":" << scores[i].first <<endl;
+      out << scores[i].second << " " << scores[i].first << endl;
     }
     delete set;
   }
