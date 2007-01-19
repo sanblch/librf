@@ -59,6 +59,9 @@ class DiscreteDist {
 		unsigned int weight(int i) const {
 			return counter_[i];
 		}
+    float percentage(int i) const {
+      return float(weight(i)) / sum();
+    }
 		static const double kLog2;
     static float entropy_conditioned_naive(const DiscreteDist* sets,
                                            int num_dists) {

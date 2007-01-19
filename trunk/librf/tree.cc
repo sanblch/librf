@@ -570,7 +570,9 @@ void Tree::print_node(int n) const{
   cout << "Terminal nodes: " << terminal_nodes_ << endl;
 }
 
-void Tree::variable_importance(map<int, float>* score, unsigned int* seed) const{
+//generate scores for all variables
+void Tree::variable_importance(vector<float>* score,
+                                unsigned int* seed) const{
   // build subset
   InstanceSet* subset = InstanceSet::create_subset(set_, *weight_list_);
   // get the oob accuracy before we start
@@ -581,27 +583,33 @@ void Tree::variable_importance(map<int, float>* score, unsigned int* seed) const
     }
   }
   float oob_acc = oob_accuracy();
-  // loop through every variable that this tree ACTUALLY USES
-  for (set<uint16>::const_iterator it = vars_used_.begin();
-       it != vars_used_.end(); it++) {
-    int var = *it;
-    // make a backup copy of the variable 
-    vector<float> backup;
-    subset->save_var(var, &backup);
-    // shuffle the values in this variable around
-    subset->permute(var, seed);
-    int permuted = 0;
-    for (int j = 0; j < subset->size(); ++j) {
-      if (predict(*subset,j) == subset->label(j)) {
-        permuted++;
+  score->resize(set_.num_attributes());
+  for (int i = 0; i < set_.num_attributes(); ++i) {
+    if (vars_used_.find(i) != vars_used_.end()) {
+      // make a backup copy of the variable 
+      vector<float> backup;
+      subset->save_var(i, &backup);
+      // shuffle the values in this variable around
+      subset->permute(i, seed);
+      int permuted = 0;
+      for (int j = 0; j < subset->size(); ++j) {
+        if (predict(*subset,j) == subset->label(j)) {
+          permuted++;
+        }
       }
+      // decrease in accuracy!
+      (*score)[i] = (correct - permuted);
+      // restore the proper stuff
+      subset->load_var(i, backup);
+    } else {
+      (*score)[i] = 0.0;
     }
-    // decrease in accuracy!
-    (*score)[var] = correct - permuted;
-    // restore the proper stuff
-    subset->load_var(*it, backup);
   }
   delete subset;
 }
+bool Tree::oob(int instance_no) const {
+  return ((*weight_list_)[instance_no] == 0);
+}
+
 
 } //namespace

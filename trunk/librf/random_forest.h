@@ -39,20 +39,34 @@ class RandomForest {
 
      /// Special logging method to predict the label
      int predict(const InstanceSet& set, int instance_no, vector<pair<int, float> >*) const;
-
+     int oob_predict(int instance_no, vector<pair<int, float> >* ) const;
+     float oob_predict_prob( int instance_no,
+                            int label) const;
      /// Predict probability of given label
      float predict_prob(const InstanceSet& set, int instance_no, int label) const;
      /// Returns test accuracy of a labeled test set
      float testing_accuracy(const InstanceSet& testset) const;
      /// Returns training accuracy 
      float training_accuracy() const;
+     void oob_votes(const InstanceSet& set, int instance_no,
+                    DiscreteDist* ) const;
      void oob_predictions(vector<DiscreteDist>* predicts) const;
+     void confusion_matrix(int num_labels,
+                           const vector<int>&,
+                           const vector<int>&) const;
      /// Returns OOB accuracy (unbiased estimate of test accuracy)
      float oob_accuracy() const;
      void oob_confusion() const;
+     void test_confusion(const InstanceSet& set) const;
      /// Variable importance ranking of features
      void variable_importance(vector< pair<float, int> >* ranking,
                               unsigned int* seed) const;
+     void variable_importance2(vector< pair<float, int> >* ranking,
+                              unsigned int* seed) const;
+
+     void reliability_diagram(int bins,
+                              vector<pair<float, float> >*,
+                              vector<int>*) const;
      /// Load random forest
      void read(istream& i);
      /// Save random forest
