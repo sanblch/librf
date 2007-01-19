@@ -64,13 +64,15 @@ class Tree {
         float oob_accuracy() const;
         void oob_predictions(vector<DiscreteDist> *) const;
 
-        void variable_importance(map<int, float>* scores, unsigned int* seed) const;
+        void variable_importance(vector<float>* scores, unsigned int* seed) const;
         void print() const;
         // do all the work -- separated this from constructor to 
         // facilitate threading
         void grow();
         void write(ostream& o) const;
         void read(istream& i);
+
+        bool oob(int instance_no) const;
     private:
         void copy_instances();
         void move_data(tree_node* n, uint16 split_attr, uint16 split_idx);

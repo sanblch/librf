@@ -90,6 +90,60 @@ int RandomForest::predict(const InstanceSet& set, int instance_no,
   return votes.mode();
 }
 
+void RandomForest::reliability_diagram(int bins,
+                                       vector<pair<float, float> >*out,
+                                       vector<int>* count) const {
+  float increment = 1.0 / bins;
+  float half = increment / 2.0;
+  vector<DiscreteDist> bin_dists(bins);
+  count->resize(bins, 0);
+  for (int i = 0; i < set_.size(); ++i) {
+    float prob = oob_predict_prob(i, 1);
+    int bin_no = int(floor(prob/increment));
+    if (bin_no == bins) {
+      bin_no = bins - 1;
+    }
+    bin_dists[bin_no].add(set_.label(i));
+    (*count)[bin_no]++;
+  }
+  float x = half;
+  for (int i = 0; i < bins; ++i) {
+    float y = bin_dists[i].percentage(1);
+    out->push_back(make_pair(x,y));
+    x += increment;
+  }
+}
+
+
+float RandomForest::oob_predict_prob(int instance_no,
+                                     int label) const {
+   // Gather the votes from each tree
+  DiscreteDist votes;
+  int total = 0;
+  for (int i = 0; i < trees_.size(); ++i) {
+    if (trees_[i]->oob(instance_no)) {
+      int predict = trees_[i]->predict(set_, instance_no);
+      votes.add(predict);
+      total++;
+    }
+  }
+  return votes.percentage(label);
+}
+
+int RandomForest::oob_predict(int instance_no,
+                          vector<pair<int, float> >*nodes) const {
+  // Gather the votes from each tree
+  DiscreteDist votes;
+  for (int i = 0; i < trees_.size(); ++i) {
+    if (trees_[i]->oob(instance_no)) {
+      int predict = trees_[i]->predict(set_, instance_no, nodes);
+      votes.add(predict);
+    }
+  }
+  return votes.mode();
+}
+
+
 
 
 float RandomForest::predict_prob(const InstanceSet& set, int instance_no, int label) const {
@@ -99,8 +153,9 @@ float RandomForest::predict_prob(const InstanceSet& set, int instance_no, int la
     int predict = trees_[i]->predict(set, instance_no);
     votes.add(predict);
   }
-  int count = votes.weight(label);
-  return float(count) / trees_.size();
+  return votes.percentage(label);
+//  int count = votes.weight(label);
+//  return float(count) / trees_.size();
 }
 
 
@@ -124,19 +179,34 @@ float RandomForest::oob_accuracy() const {
   return float(total)/set_.size();
 }
 
-void RandomForest::oob_confusion() const {
-  vector<DiscreteDist> predicts;
-  oob_predictions(&predicts);
+
+void RandomForest::test_confusion(const InstanceSet& set) const {
+  vector<int> predictions;
+  vector<int> labels;
+  for (int i = 0; i < set.size(); ++i) {
+    labels.push_back(set.label(i));
+    predictions.push_back(predict(set, i));
+  }
+  // HARDCODED
+  // TODO: Fix me!
+  confusion_matrix(2, predictions, labels);
+}
+
+
+
+
+
+void RandomForest::confusion_matrix(int num_labels,
+                                    const vector<int>& predicts,
+                                    const vector<int>& actual) const {
+  assert(actual.size() == predicts.size());
   vector< vector<int> > matrix;
-  //HARDCODED
-  //TODO: FIX
-  int num_labels = 2;
   matrix.resize(num_labels);
   for (int i = 0; i < num_labels; ++i) {
     matrix[i].resize(num_labels, 0);
   }
-  for (int i = 0; i < set_.size(); ++i) {
-    matrix[set_.label(i)][predicts[i].mode()]++;
+  for (int i = 0; i < actual.size(); ++i) {
+    matrix[actual[i]][predicts[i]]++;
   }
   for (int i = 0; i < num_labels; ++i) {
     for (int j = 0; j < num_labels; ++j) {
@@ -144,6 +214,22 @@ void RandomForest::oob_confusion() const {
     }
     cout <<endl;
   }
+}
+
+
+
+void RandomForest::oob_confusion() const {
+  vector<DiscreteDist> predicts;
+  oob_predictions(&predicts);
+  vector<int> prediction;
+  vector<int> labels;
+  for (int i = 0; i < predicts.size(); ++i) {
+    prediction.push_back(predicts[i].mode());
+    labels.push_back(set_.label(i));
+  }
+  //HARDCODED
+  //TODO: fix me!
+  confusion_matrix(2, prediction, labels);
 }
 
 /*
@@ -179,20 +265,15 @@ float RandomForest::testing_accuracy(const InstanceSet& set) const {
 
 void RandomForest::variable_importance(vector< pair< float, int> >*ranking,
                                        unsigned int* seed) const {
-  vector< pair<float, int> > importances; // sum, count
+  vector<float> importances(set_.num_attributes(),
+                            0.00);
   // Zero-out importances
-  for (int i = 0; i < set_.num_attributes(); ++i) {
-    importances.push_back(make_pair(float(0.0),int(0)));
-  }
   for (int i = 0; i < trees_.size(); ++i) {
-    map<int, float> tree_importance;
-    // gather scores from individual tree
+    vector<float> tree_importance;
     trees_[i]->variable_importance(&tree_importance, seed);
     //aggregate
-    for (map<int,float>::const_iterator i = tree_importance.begin();
-         i != tree_importance.end(); ++i) {
-      importances[i->first].first += i->second;
-      importances[i->first].second ++;
+    for (int j = 0; j < tree_importance.size(); ++j) {
+      importances[j] +=  tree_importance[j];
     }
   }
   // Get the mean of scores
@@ -200,10 +281,7 @@ void RandomForest::variable_importance(vector< pair< float, int> >*ranking,
   float sum = 0;
   float sum_of_squares = 0;
   for (int i = 0; i < importances.size(); ++i) {
-    float avg = 0;
-    if (importances[i].second != 0) {
-      avg = importances[i].first / importances[i].second;
-    }
+    float avg = importances[i] / trees_.size();
     assert(avg == avg);
     raw_scores.push_back(avg);
     sum += avg;
@@ -227,6 +305,7 @@ void RandomForest::variable_importance(vector< pair< float, int> >*ranking,
   // Sort
   sort(ranking->begin(), ranking->end(), greater<pair<float,int> >());
 }
+
 
 /*
 float RandomForest::predict_prob(const Instance& c) const {
