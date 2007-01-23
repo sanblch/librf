@@ -41,6 +41,7 @@ int main(int argc, char*argv[]) {
     InstanceSet* set = InstanceSet::load_csv_and_labels(datafile, labelfile, header, delim);
     cout << " Read in " << set->num_attributes() << " attrs." << endl;
     RandomForest rf(*set, num_trees, K);
+    cout << "Forest trained." << endl;
     unsigned int seed = 1;
     vector< pair<float, int> > scores;
     rf.variable_importance(&scores, &seed);

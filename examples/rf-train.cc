@@ -25,6 +25,8 @@ int main(int argc, char*argv[]) {
     ValueArg<int> treesArg("t", "trees", "# Trees", false, 10, "int");
     ValueArg<int> kArg("k", "vars", "# vars per tree", false,
                                  10, "int");
+    ValueArg<string> probArg("p", "prob",
+                              "probability file", false, "", "probs");
     cmd.add(delimArg);
     cmd.add(headerFlag);
     cmd.add(csvFlag);
@@ -34,14 +36,16 @@ int main(int argc, char*argv[]) {
     cmd.add(modelArg);
     cmd.add(treesArg);
     cmd.add(kArg);
-
+    cmd.add(probArg);
     cmd.parse(argc, argv);
+
     bool csv = csvFlag.getValue();
     bool header = headerFlag.getValue();
     string delim = delimArg.getValue();
     string datafile = dataArg.getValue();
     string modelfile = modelArg.getValue();
     string labelfile = labelArg.getValue();
+    string probfile = probArg.getValue();
     int K = kArg.getValue();
     int num_features = numfeaturesArg.getValue();
     int num_trees = treesArg.getValue();
@@ -60,6 +64,13 @@ int main(int argc, char*argv[]) {
     ofstream out(modelfile.c_str());
     rf.write(out);
     cout << "Model file saved to " << modelfile << endl;
+
+    if (probfile.size() > 0) {
+      ofstream prob_out(probfile.c_str());
+      for (int i = 0; i < set->size(); i++) {
+        prob_out << rf.oob_predict_prob(i, 1) << endl;
+      }
+    }
     // rf.print();
     delete set;
   }
