@@ -3,6 +3,8 @@
 #include <tclap/CmdLine.h>
 #include <iostream>
 #include <fstream>
+#include <set>
+#include <vector>
 
 using namespace std;
 using namespace librf;
@@ -10,57 +12,55 @@ using namespace TCLAP;
 int main(int argc, char*argv[]) {
   // Check arguments
   try {
-    SwitchArg csvFlag("","csv","Data is a CSV file",false);
+    CmdLine cmd("singleclock", ' ', "0.1");
     SwitchArg headerFlag("","header","CSV file has a var name header",false);
     ValueArg<string> delimArg("","delim","CSV delimiter", false,",","delimiter");
     ValueArg<string> labelArg("l", "label",
                               "Label file", false, "", "labels");
-
-    CmdLine cmd("rf-predict", ' ', "0.1");
     ValueArg<string>  dataArg("d", "data",
                                    "Training Data", true, "", "testdata");
-    ValueArg<string> modelArg("m", "model",
-                              "Model file output", true, "", "rfmodel");
-
-    ValueArg<int> numfeaturesArg("f", "features", "# features", false,
-                                 -1, "int");
     ValueArg<string> outputArg("o", "output", "predictions", true, "", "output");
+    ValueArg<string> modelArg("m", "model", "model", true, "", "model");
+    ValueArg<int> cArg("c", "clock", "which clock", true, 19, "int");
     cmd.add(delimArg);
-    cmd.add(headerFlag);
-    cmd.add(csvFlag);
     cmd.add(labelArg);
     cmd.add(outputArg);
-    cmd.add(numfeaturesArg);
     cmd.add(dataArg);
     cmd.add(modelArg);
+    cmd.add(cArg);
     cmd.parse(argc, argv);
-    bool csv = csvFlag.getValue();
+
     bool header = headerFlag.getValue();
     string delim = delimArg.getValue();
     string labelfile = labelArg.getValue();
     string datafile = dataArg.getValue();
-    string modelfile = modelArg.getValue();
     string outfile = outputArg.getValue();
-
-    int num_features = numfeaturesArg.getValue();
-    InstanceSet* set = NULL;
-    if (!csv) {
-      set = InstanceSet::load_libsvm(datafile, num_features);
-    } else {
-      set = InstanceSet::load_csv_and_labels(datafile, labelfile, header, delim);
+    string modelfile = modelArg.getValue();
+    int clock = cArg.getValue();
+    float clock_threshold = clock * 50.0;
+    InstanceSet* iset = InstanceSet::load_csv_and_labels(datafile, labelfile, header, delim);
+    // alter instance_set
+    for (int i = 0; i < iset->num_attributes(); i++) {
+      vector<float> backup;
+      iset->save_var(i, &backup);
+      for (int j = 0; j < backup.size(); ++j) {
+        float val = backup[j];
+        if (val > clock_threshold) {
+          backup[j] = 1;
+        } else {
+          backup[j] = 0;
+        }
+      }
+      iset->load_var(i, backup);
     }
-
     RandomForest rf;
     ifstream in(modelfile.c_str());
     rf.read(in);
-    cout << "Test accuracy: " << rf.testing_accuracy(*set) << endl;;
     ofstream out(outfile.c_str());
-    for (int i = 0; i < set->size(); ++i) {
-      out << rf.predict_prob(*set, i, 1) << endl;
+    for (int i = 0; i < iset->size(); ++i) {
+      out << rf.predict_prob(*iset, i, 1) << endl;
     }
-    cout << "Confusion matrix" << endl;
-    rf.test_confusion(*set);
-    delete set;
+    delete iset;
   }
   catch (TCLAP::ArgException &e)  // catch any exceptions 
   {
