@@ -60,6 +60,14 @@ int main(int argc, char*argv[]) {
     }
     cout << "Confusion matrix" << endl;
     rf.test_confusion(*set);
+    vector<pair<float, float> > rd;
+    vector<int> hist;
+    cout << "Reliability" << endl;
+    rf.reliability_diagram(*set, 10, &rd, &hist);
+    for (int i = 0; i < rd.size(); ++i) {
+      cout << rd[i].first << " " << rd[i].second << " " << hist[i] << endl;
+    }
+
     delete set;
   }
   catch (TCLAP::ArgException &e)  // catch any exceptions 
