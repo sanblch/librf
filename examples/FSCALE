@@ -1,0 +1,8 @@
+./rfvarimport -k 17 -t 100 -l ../data/rand0_label.txt -d ../data/rand0.txt --delim " " -o rand0.ranking
+./featuresel -d ../data/rand0.txt -r rand0.ranking -f 10 -l ../data/rand0_label.txt --delim " "
+./featuresel -d ../data/rand1.txt -r rand0.ranking -f 10 -l ../data/rand1_label.txt
+# reduced
+./rftrain -t 100 -m bin.10.model -d rand0.top10 -l ../data/fmax_rand0.txt
+--csv --delim " "
+./rfpredict -m bin.10.model -d rand1.top10 --csv --delim " " -l
+../data/fmax_rand1.txt -o rand1.out
