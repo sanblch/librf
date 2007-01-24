@@ -90,6 +90,33 @@ int RandomForest::predict(const InstanceSet& set, int instance_no,
   return votes.mode();
 }
 
+void RandomForest::reliability_diagram(const InstanceSet&set,
+                                       int bins,
+                                       vector<pair<float, float> >*out,
+                                       vector<int>* count) const {
+  float increment = 1.0 / bins;
+  float half = increment / 2.0;
+  vector<DiscreteDist> bin_dists(bins);
+  count->resize(bins, 0);
+  for (int i = 0; i < set.size(); ++i) {
+    float prob = predict_prob(set, i, 1);
+    int bin_no = int(floor(prob/increment));
+    if (bin_no == bins) {
+      bin_no = bins - 1;
+    }
+    bin_dists[bin_no].add(set.label(i));
+    (*count)[bin_no]++;
+  }
+  float x = half;
+  for (int i = 0; i < bins; ++i) {
+    float y = bin_dists[i].percentage(1);
+    out->push_back(make_pair(x,y));
+    x += increment;
+  }
+}
+
+
+
 void RandomForest::reliability_diagram(int bins,
                                        vector<pair<float, float> >*out,
                                        vector<int>* count) const {
