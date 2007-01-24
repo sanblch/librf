@@ -67,6 +67,10 @@ class RandomForest {
      void reliability_diagram(int bins,
                               vector<pair<float, float> >*,
                               vector<int>*) const;
+     void reliability_diagram(const InstanceSet& set,
+                              int bins,
+                              vector<pair<float, float> >*,
+                              vector<int>*) const;
      /// Load random forest
      void read(istream& i);
      /// Save random forest
