@@ -3,7 +3,7 @@
 #include <tclap/CmdLine.h>
 #include <iostream>
 #include <fstream>
-
+#include <math.h>
 using namespace std;
 using namespace librf;
 using namespace TCLAP;
@@ -24,7 +24,7 @@ int main(int argc, char*argv[]) {
                                  -1, "int");
     ValueArg<int> treesArg("t", "trees", "# Trees", false, 10, "int");
     ValueArg<int> kArg("k", "vars", "# vars per tree", false,
-                                 10, "int");
+                                 -1, "int");
     ValueArg<string> probArg("p", "prob",
                               "probability file", false, "", "probs");
     cmd.add(delimArg);
@@ -55,12 +55,24 @@ int main(int argc, char*argv[]) {
     } else {
       set = InstanceSet::load_csv_and_labels(datafile, labelfile, header, delim);
     }
+    // if mtry was not set defaults to sqrt(num_features)
+    if (K == -1) {
+       K = int(sqrt(double(set->num_attributes())));
+    }
     // vector<int> weights;
     RandomForest rf(*set, num_trees, K); //, weights);
     cout << "Training Accuracy " << rf.training_accuracy() << endl;
     cout << "OOB Accuracy " << rf.oob_accuracy() << endl;
     cout << "---Confusion Matrix----" << endl;
     rf.oob_confusion();
+    vector<pair<float, float> > rd;
+    vector<int> hist;
+    cout << "Reliability Diagram" << endl;
+    rf.reliability_diagram(10, &rd, &hist);
+    for (int i = 0; i < rd.size(); ++i) {
+      cout << rd[i].first << " " << rd[i].second << " " << hist[i] << endl;
+    }
+
     ofstream out(modelfile.c_str());
     rf.write(out);
     cout << "Model file saved to " << modelfile << endl;
