@@ -56,16 +56,19 @@ int main(int argc, char*argv[]) {
     cout << "Test accuracy: " << rf.testing_accuracy(*set) << endl;;
     ofstream out(outfile.c_str());
     for (int i = 0; i < set->size(); ++i) {
-      out << rf.predict_prob(*set, i, 1) << endl;
+      out << rf.predict_prob(*set, i, 0) << endl;
     }
     cout << "Confusion matrix" << endl;
     rf.test_confusion(*set);
     vector<pair<float, float> > rd;
     vector<int> hist;
     cout << "Reliability" << endl;
-    rf.reliability_diagram(*set, 10, &rd, &hist);
+    rf.reliability_diagram(*set, 10, &rd, &hist, 0);
+    cout << "bin fraction 1 0 total" << endl;
     for (int i = 0; i < rd.size(); ++i) {
-      cout << rd[i].first << " " << rd[i].second << " " << hist[i] << endl;
+      int positive = int(round(hist[i]*rd[i].second));
+      cout << rd[i].first << " " << rd[i].second << " ";
+      cout << positive << " " << (hist[i] - positive) << " " << hist[i] <<endl;
     }
 
     delete set;

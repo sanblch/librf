@@ -66,11 +66,19 @@ class RandomForest {
 
      void reliability_diagram(int bins,
                               vector<pair<float, float> >*,
-                              vector<int>*) const;
+                              vector<int>*,
+                              int label = 1) const;
      void reliability_diagram(const InstanceSet& set,
                               int bins,
                               vector<pair<float, float> >*,
-                              vector<int>*) const;
+                              vector<int>*,
+                              int label = 1) const;
+     void compute_proximity(const InstanceSet& set,
+                            vector<vector<float> >* prox) const;
+
+     void compute_outliers(const InstanceSet& set,
+                           const vector<vector<float> >& mat,
+                           vector<float>* outs) const;
      /// Load random forest
      void read(istream& i);
      /// Save random forest
