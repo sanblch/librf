@@ -25,9 +25,13 @@ int main(int argc, char*argv[]) {
     ValueArg<int> treesArg("t", "trees", "# Trees", false, 10, "int");
     ValueArg<int> kArg("k", "vars", "# vars per tree", false,
                                  -1, "int");
-    ValueArg<string> probArg("p", "prob",
-                              "probability file", false, "", "probs");
+    ValueArg<string> probArg("p", "probfile",
+                              "probability file", false, "", "probfile");
+    ValueArg<string> proxArg("", "proxfile",
+                              "proximity file", false, "", "proxfile");
+    ValueArg<string> importArg("","importance", "importance", false, "", "importance");
     cmd.add(delimArg);
+    cmd.add(importArg);
     cmd.add(headerFlag);
     cmd.add(csvFlag);
     cmd.add(labelArg);
@@ -37,6 +41,7 @@ int main(int argc, char*argv[]) {
     cmd.add(treesArg);
     cmd.add(kArg);
     cmd.add(probArg);
+    cmd.add(proxArg);
     cmd.parse(argc, argv);
 
     bool csv = csvFlag.getValue();
@@ -46,6 +51,8 @@ int main(int argc, char*argv[]) {
     string modelfile = modelArg.getValue();
     string labelfile = labelArg.getValue();
     string probfile = probArg.getValue();
+    string proxfile = proxArg.getValue();
+    string importfile = importArg.getValue();
     int K = kArg.getValue();
     int num_features = numfeaturesArg.getValue();
     int num_trees = treesArg.getValue();
@@ -68,9 +75,12 @@ int main(int argc, char*argv[]) {
     vector<pair<float, float> > rd;
     vector<int> hist;
     cout << "Reliability Diagram" << endl;
-    rf.reliability_diagram(10, &rd, &hist);
+    rf.reliability_diagram(10, &rd, &hist, 0);
+    cout << "bin fraction 1 0 total" << endl;
     for (int i = 0; i < rd.size(); ++i) {
-      cout << rd[i].first << " " << rd[i].second << " " << hist[i] << endl;
+      int positive = int(round(hist[i]*rd[i].second));
+      cout << rd[i].first << " " << rd[i].second << " ";
+      cout << positive << " " << (hist[i] - positive) << " " << hist[i] <<endl;
     }
 
     ofstream out(modelfile.c_str());
@@ -80,7 +90,34 @@ int main(int argc, char*argv[]) {
     if (probfile.size() > 0) {
       ofstream prob_out(probfile.c_str());
       for (int i = 0; i < set->size(); i++) {
-        prob_out << rf.oob_predict_prob(i, 1) << endl;
+        prob_out << rf.oob_predict_prob(i, 0) << endl;
+      }
+    }
+    if (proxfile.size() > 0) {
+      ofstream prox_out(proxfile.c_str());
+      vector<vector<float> > mat(set->size(), vector<float>(set->size(), 0.0));
+      rf.compute_proximity(*set, &mat);
+      for (int i = 0; i < set->size(); ++i) {
+        for (int j = 0; j < set->size(); ++j) {
+          prox_out << mat[i][j] << " ";
+        }
+        prox_out << endl;
+      }
+      ofstream outliers_file("outliers");
+      vector<float> outliers(set->size());
+      rf.compute_outliers(*set, mat, &outliers);
+      for (int i = 0; i < outliers.size(); ++i) {
+        outliers_file << outliers[i] << endl;
+      }
+    }
+
+    if (importfile.size() > 0) {
+      ofstream rankings(importfile.c_str());
+      unsigned int seed = 1;
+      vector< pair<float, int> > scores;
+      rf.variable_importance(&scores, &seed);
+      for (int i = 0; i < scores.size(); ++i) {
+        rankings << scores[i].second << " " << scores[i].first << endl;
       }
     }
     // rf.print();

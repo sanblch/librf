@@ -25,6 +25,18 @@ void random_sample(int n, int K, vector<int>*v, unsigned int* seed) {
     }
   }
 }
-
+// slow and stupid median
+/*
+float median(const vector<float>& list) {
+  vector<float>  sorted = list;
+  sort(sorted.begin(), sorted.end());
+  float half = sorted.size() / 2;
+  if ( sorted.size()&1 ==0) { //even case
+    return (sorted[half] + sorted[half - 1])/2.0;
+  } else {
+    return (sorted[int(half)]);
+  }
+}
+*/
 } // namespace
 #endif

@@ -54,8 +54,12 @@ class Tree {
         /// predict a new instance
         int predict(const Instance& c) const;
         /// predict an instance from a set
-        int predict(const InstanceSet& set, int instance_no) const;
+        int predict(const InstanceSet& set, int instance_no, int *terminal = NULL) const;
         int predict(const InstanceSet& set, int instance_no, vector<pair<int, float> >*) const;
+        int terminal_node(const InstanceSet& set, int i) const;
+        void compute_proximity(const InstanceSet& set,
+                               vector<vector<float> >* prox,
+                               bool oob) const;
         // void write_dot(const string& s) const;
         /// Return the accuracy for the training set
         float training_accuracy() const;

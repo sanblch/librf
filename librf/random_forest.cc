@@ -8,7 +8,6 @@
 #include "librf/weights.h"
 #include <fstream>
 #include <algorithm>
-
 namespace librf {
 
 RandomForest::RandomForest() : set_(InstanceSet()) {}
@@ -93,13 +92,13 @@ int RandomForest::predict(const InstanceSet& set, int instance_no,
 void RandomForest::reliability_diagram(const InstanceSet&set,
                                        int bins,
                                        vector<pair<float, float> >*out,
-                                       vector<int>* count) const {
+                                       vector<int>* count, int label) const {
   float increment = 1.0 / bins;
   float half = increment / 2.0;
   vector<DiscreteDist> bin_dists(bins);
   count->resize(bins, 0);
   for (int i = 0; i < set.size(); ++i) {
-    float prob = predict_prob(set, i, 1);
+    float prob = predict_prob(set, i, label);
     int bin_no = int(floor(prob/increment));
     if (bin_no == bins) {
       bin_no = bins - 1;
@@ -109,7 +108,7 @@ void RandomForest::reliability_diagram(const InstanceSet&set,
   }
   float x = half;
   for (int i = 0; i < bins; ++i) {
-    float y = bin_dists[i].percentage(1);
+    float y = bin_dists[i].percentage(label);
     out->push_back(make_pair(x,y));
     x += increment;
   }
@@ -119,13 +118,13 @@ void RandomForest::reliability_diagram(const InstanceSet&set,
 
 void RandomForest::reliability_diagram(int bins,
                                        vector<pair<float, float> >*out,
-                                       vector<int>* count) const {
+                                       vector<int>* count, int label) const {
   float increment = 1.0 / bins;
   float half = increment / 2.0;
   vector<DiscreteDist> bin_dists(bins);
   count->resize(bins, 0);
   for (int i = 0; i < set_.size(); ++i) {
-    float prob = oob_predict_prob(i, 1);
+    float prob = oob_predict_prob(i, label);
     int bin_no = int(floor(prob/increment));
     if (bin_no == bins) {
       bin_no = bins - 1;
@@ -135,11 +134,44 @@ void RandomForest::reliability_diagram(int bins,
   }
   float x = half;
   for (int i = 0; i < bins; ++i) {
-    float y = bin_dists[i].percentage(1);
+    float y = bin_dists[i].percentage(label);
     out->push_back(make_pair(x,y));
     x += increment;
   }
 }
+
+void RandomForest::compute_proximity(const InstanceSet& set,
+                            vector<vector<float> >* prox) const {
+  for (int i = 0; i < trees_.size(); ++i) {
+    trees_[i]->compute_proximity(set, prox, false);
+  }
+  for (int i = 0; i < prox->size(); ++i) {
+    for ( int j = 0; j < prox->size(); ++j) {
+        (*prox)[i][j]/= trees_.size();
+    }
+  }
+}
+
+void RandomForest::compute_outliers(const InstanceSet& set,
+                                   const vector<vector<float> >& mat,
+                                    vector<float>* outs) const {
+  vector<float> average_proximity(set.size(), 0.0);
+  for (int i = 0; i < set.size(); ++i) {
+    for (int j = 0; j < set.size(); ++j) {
+      if ((i != j) && (set.label(i) == set.label(j))) {
+        float prox = mat[i][j];
+        average_proximity[i] += prox*prox;
+      }
+    }
+  }
+  for (int i = 0; i <set.size(); ++i) {
+   (*outs)[i] = float(set.size())/average_proximity[i];
+  }
+  // TODO: make this work for more than binary
+  // find the median for both classes
+  // divide by abs deviation from median
+}
+
 
 
 float RandomForest::oob_predict_prob(int instance_no,

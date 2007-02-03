@@ -453,7 +453,7 @@ int Tree::predict(const Instance& c) const {
   }
 }
 */
-int Tree::predict(const InstanceSet& set, int instance_no) const {
+int Tree::predict(const InstanceSet& set, int instance_no, int *terminal) const {
   //base case
   bool result = false;
   int cur_node = 0;
@@ -472,9 +472,11 @@ int Tree::predict(const InstanceSet& set, int instance_no) const {
       }
     }
   }
+  if (terminal != NULL) {
+    *terminal = cur_node;
+  }
   return label;
 }
-
 
 
 /***
@@ -611,5 +613,21 @@ bool Tree::oob(int instance_no) const {
   return ((*weight_list_)[instance_no] == 0);
 }
 
+void Tree::compute_proximity(const InstanceSet& set,
+                               vector<vector<float> >* prox,
+                               bool oob) const{
+  for (int i = 0; i < set.size(); ++i) {
+    int node_i;
+    predict(set, i, &node_i);
+    for (int j = i + 1; j < set.size(); ++j) {
+      int node_j;
+      predict(set, j, &node_j);
+      if (node_i == node_j) {
+        (*prox)[i][j] += 1.0;
+        (*prox)[j][i] += 1.0;
+      }
+    }
+  }
+}
 
 } //namespace
