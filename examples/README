@@ -6,7 +6,7 @@ Currently, the default is libSVM format -- but a CSV format with optional header
 USAGE: 
    ./rftrain  [-p <probs>] [-k <int>] [-t <int>] -m <rfmodel> -d
               <trainingdata> [-f <int>] [-l <labels>] [--csv] [--header]
-              [--delim <delimiter>] [--] [--version] [-h]
+              [--delim <delimiter>] [--importance] [--] [--version] [-h]
 
 CSV EXAMPLE:
 ./rftrain -t 100 -m heart.model -d ../data/heart.csv --header --csv -l ../data/heart_labels.txt 
