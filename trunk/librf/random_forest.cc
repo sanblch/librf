@@ -152,24 +152,28 @@ void RandomForest::compute_proximity(const InstanceSet& set,
   }
 }
 
-void RandomForest::compute_outliers(const InstanceSet& set,
+void RandomForest::compute_outliers(const InstanceSet& set, int label,
                                    const vector<vector<float> >& mat,
-                                    vector<float>* outs) const {
+                                   vector< pair< float, int> >*ranking) const {
+
   vector<float> average_proximity(set.size(), 0.0);
   for (int i = 0; i < set.size(); ++i) {
-    for (int j = 0; j < set.size(); ++j) {
-      if ((i != j) && (set.label(i) == set.label(j))) {
-        float prox = mat[i][j];
-        average_proximity[i] += prox*prox;
+    if (set.label(i) == label) {
+      for (int j = 0; j < set.size(); ++j) {
+        if ((i != j) && (set.label(j) == label)) {
+          float prox = mat[i][j];
+          average_proximity[i] += prox*prox;
+        }
       }
     }
   }
   for (int i = 0; i <set.size(); ++i) {
-   (*outs)[i] = float(set.size())/average_proximity[i];
+    if (set.label(i) ==label) {
+      float out_score = float(set.size())/average_proximity[i];
+      ranking->push_back(make_pair(out_score, i));
+    }
   }
-  // TODO: make this work for more than binary
-  // find the median for both classes
-  // divide by abs deviation from median
+  sort(ranking->begin(), ranking->end(), greater<pair<float,int> >());
 }
 
 

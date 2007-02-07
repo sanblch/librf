@@ -76,9 +76,9 @@ class RandomForest {
      void compute_proximity(const InstanceSet& set,
                             vector<vector<float> >* prox) const;
 
-     void compute_outliers(const InstanceSet& set,
+     void compute_outliers(const InstanceSet& set, int label,
                            const vector<vector<float> >& mat,
-                           vector<float>* outs) const;
+                           vector<pair< float, int> >* ranking) const;
      /// Load random forest
      void read(istream& i);
      /// Save random forest
