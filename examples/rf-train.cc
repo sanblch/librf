@@ -65,13 +65,16 @@ int main(int argc, char*argv[]) {
     int num_trees = treesArg.getValue();
     InstanceSet* set = NULL;
     unsigned int seed = 1;
+    int set_size;
     //if (!csv) {
       // set = InstanceSet::load_libsvm(datafile, num_features);
     //} else {
     if (!unsupervised) {
       set = InstanceSet::load_csv_and_labels(datafile, labelfile, header, delim);
+      set_size = set->size();
     } else {
       set = InstanceSet::load_unsupervised(datafile, &seed, header, delim);
+      set_size = set->size() / 2;
     }
     //}
     // if mtry was not set defaults to sqrt(num_features)
@@ -108,10 +111,10 @@ int main(int argc, char*argv[]) {
     if (proxfile.size() > 0) {
       cout << "Generating proximity matrix" << endl;
       ofstream prox_out(proxfile.c_str());
-      vector<vector<float> > mat(set->size(), vector<float>(set->size(), 0.0));
-      rf.compute_proximity(*set, &mat);
-      for (int i = 0; i < set->size(); ++i) {
-        for (int j = 0; j < set->size(); ++j) {
+      vector<vector<float> > mat(set_size, vector<float>(set_size, 0.0));
+      rf.compute_proximity(*set, &mat, set_size);
+      for (int i = 0; i < mat.size(); ++i) {
+        for (int j = 0; j < mat[i].size(); ++j) {
           prox_out << mat[i][j] << " ";
         }
         prox_out << endl;
