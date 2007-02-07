@@ -168,7 +168,7 @@ DIST_SOURCES = $(adaptivetest_SOURCES) $(adaptivetrain_SOURCES) \
 	$(featuresel_SOURCES) $(rfpredict_SOURCES) $(rftrain_SOURCES) \
 	$(rfvarimport_SOURCES) $(singleclock_SOURCES) \
 	$(singleclock_test_SOURCES) $(singleclock_transform_SOURCES)
-DIST_COMMON = Makefile.am Makefile.in TODO
+DIST_COMMON = README Makefile.am Makefile.in TODO
 SOURCES = $(adaptivetest_SOURCES) $(adaptivetrain_SOURCES) $(featuresel_SOURCES) $(rfpredict_SOURCES) $(rftrain_SOURCES) $(rfvarimport_SOURCES) $(singleclock_SOURCES) $(singleclock_test_SOURCES) $(singleclock_transform_SOURCES)
 
 all: all-am
@@ -405,6 +405,7 @@ uninstall-am: uninstall-binPROGRAMS uninstall-info-am
 	mostlyclean-generic tags uninstall uninstall-am \
 	uninstall-binPROGRAMS uninstall-info-am
 
+#CXXFLAGS = -DHAVE_SSTREAM -ggdb 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

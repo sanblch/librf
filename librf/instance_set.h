@@ -29,6 +29,11 @@ class InstanceSet {
         InstanceSet();
         /// Named constructor - create a subset from an existing instanceset
         static InstanceSet* create_subset(const InstanceSet&, const weight_list&);
+        /// Named constructor - no labels
+        static InstanceSet* load_unsupervised(const string& data,
+                                              unsigned int* seed,
+                                              bool header = false,
+                                              const string& delim =",");
         /// Named constructor - feature selection
         static InstanceSet* feature_select(const InstanceSet&, const vector<int>&);
         /// Named constructor - load from csv file and a label file
@@ -83,6 +88,9 @@ class InstanceSet {
     private:
         /// Load from csv file and labels
         InstanceSet(const string& csv_data, const string& labels,
+                    bool header=false, const string& delim=",");
+        // Load csv for unsupervised
+        InstanceSet(const string& csv_data, unsigned int* seed,
                     bool header=false, const string& delim=",");
         /// Load from libsvm format
         InstanceSet(const string& filename, int num);

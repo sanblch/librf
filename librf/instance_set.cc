@@ -25,6 +25,22 @@ InstanceSet* InstanceSet::load_csv_and_labels(const string& csv_data,
   return new InstanceSet(csv_data, label_file, header, delim);
 }
 
+/***
+ * Named constructor for loading unsupervised
+ * @param csv_data CSV filename
+ * @param header whether there is a header with var. names
+ * @param delim CSV delimiter - defaults to ','
+ */
+InstanceSet* InstanceSet::load_unsupervised(const string& csv_data,
+                                              unsigned int * seed,
+                                      bool header,
+                                      const string& delim) {
+  return new InstanceSet(csv_data, seed, header, delim);
+}
+
+
+
+
 /**
  * Named constructor for creating a subset from an existing set
  * 
@@ -61,6 +77,30 @@ InstanceSet::InstanceSet(const string& csv_data,
   assert(attributes_[0].size() == labels_.size());
 }
 
+/***
+ * Unnamed private constructor for loading CSV for unsupervised
+ */
+InstanceSet::InstanceSet(const string& csv_data, unsigned int* seed,
+                         bool header, const string& delim) {
+  ifstream data(csv_data.c_str());
+  load_csv(data, header, delim);
+  // organic set gets 0 label
+  assert(attributes_.size() > 0);
+  labels_.resize(attributes_[0].size(), 0);
+  int original_set_size = attributes_[0].size();
+  for (int i = 0; i < original_set_size; ++i) {
+    for (int j = 0; j < attributes_.size(); ++j) {
+      // uniformly sample from attributes_[j][0-original_set_size-1]
+      int select = rand_r(seed) % original_set_size;
+      float sample = attributes_[j][select];
+      attributes_[j].push_back(sample);
+    }
+    // synthetic gets 1 label
+    labels_.push_back(1);
+  }
+  assert(attributes_[0].size() == labels_.size());
+  create_sorted_indices();
+}
 
 /**
  * Named constructor for feature selection 

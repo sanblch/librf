@@ -11,3 +11,4 @@ singleclock_transform_SOURCES = single_clock_transform.cc
 INCLUDES =  -I ../librf -I ../tclap
 LIBS =  -L../librf -lrf
 CXXFLAGS = -DHAVE_SSTREAM #-ggdb
+#CXXFLAGS = -DHAVE_SSTREAM -ggdb 

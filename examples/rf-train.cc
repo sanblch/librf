@@ -29,7 +29,12 @@ int main(int argc, char*argv[]) {
                               "probability file", false, "", "probfile");
     ValueArg<string> proxArg("", "proxfile",
                               "proximity file", false, "", "proxfile");
+    ValueArg<string> outliersArg("", "outliers", "outlier file", false, "outliers", "outlierfile");
     ValueArg<string> importArg("","importance", "importance", false, "", "importance");
+    SwitchArg unsuperFlag("", "unsupervised", "Unsupervised mode", false);
+
+    cmd.add(outliersArg);
+    cmd.add(unsuperFlag);
     cmd.add(delimArg);
     cmd.add(importArg);
     cmd.add(headerFlag);
@@ -46,6 +51,8 @@ int main(int argc, char*argv[]) {
 
     bool csv = csvFlag.getValue();
     bool header = headerFlag.getValue();
+    bool unsupervised = unsuperFlag.getValue();
+    string outlier_file = outliersArg.getValue();
     string delim = delimArg.getValue();
     string datafile = dataArg.getValue();
     string modelfile = modelArg.getValue();
@@ -57,11 +64,16 @@ int main(int argc, char*argv[]) {
     int num_features = numfeaturesArg.getValue();
     int num_trees = treesArg.getValue();
     InstanceSet* set = NULL;
-    if (!csv) {
-      set = InstanceSet::load_libsvm(datafile, num_features);
-    } else {
+    unsigned int seed = 1;
+    //if (!csv) {
+      // set = InstanceSet::load_libsvm(datafile, num_features);
+    //} else {
+    if (!unsupervised) {
       set = InstanceSet::load_csv_and_labels(datafile, labelfile, header, delim);
+    } else {
+      set = InstanceSet::load_unsupervised(datafile, &seed, header, delim);
     }
+    //}
     // if mtry was not set defaults to sqrt(num_features)
     if (K == -1) {
        K = int(sqrt(double(set->num_attributes())));
@@ -94,6 +106,7 @@ int main(int argc, char*argv[]) {
       }
     }
     if (proxfile.size() > 0) {
+      cout << "Generating proximity matrix" << endl;
       ofstream prox_out(proxfile.c_str());
       vector<vector<float> > mat(set->size(), vector<float>(set->size(), 0.0));
       rf.compute_proximity(*set, &mat);
@@ -103,17 +116,16 @@ int main(int argc, char*argv[]) {
         }
         prox_out << endl;
       }
-      ofstream outliers_file("outliers");
-      vector<float> outliers(set->size());
-      rf.compute_outliers(*set, mat, &outliers);
+      ofstream out_file(outlier_file.c_str());
+      vector<pair<float, int> >outliers;
+      rf.compute_outliers(*set, 0, mat, &outliers);
       for (int i = 0; i < outliers.size(); ++i) {
-        outliers_file << outliers[i] << endl;
+        out_file << outliers[i].second << " " << outliers[i].first << endl;
       }
     }
 
     if (importfile.size() > 0) {
       ofstream rankings(importfile.c_str());
-      unsigned int seed = 1;
       vector< pair<float, int> > scores;
       rf.variable_importance(&scores, &seed);
       for (int i = 0; i < scores.size(); ++i) {
