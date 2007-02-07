@@ -59,7 +59,7 @@ class Tree {
         int terminal_node(const InstanceSet& set, int i) const;
         void compute_proximity(const InstanceSet& set,
                                vector<vector<float> >* prox,
-                               bool oob) const;
+                               bool oob = false, int limit = -1) const;
         // void write_dot(const string& s) const;
         /// Return the accuracy for the training set
         float training_accuracy() const;

@@ -615,11 +615,17 @@ bool Tree::oob(int instance_no) const {
 
 void Tree::compute_proximity(const InstanceSet& set,
                                vector<vector<float> >* prox,
-                               bool oob) const{
-  for (int i = 0; i < set.size(); ++i) {
+                               bool oob,
+                               int limit) const{
+  // Limit is useful for unsupervised case
+  // No need to calculate proximity for synthetic test set
+  if (limit == -1) { // default sentinel value
+    limit = set.size();
+  }
+  for (int i = 0; i < limit; ++i) {
     int node_i;
     predict(set, i, &node_i);
-    for (int j = i + 1; j < set.size(); ++j) {
+    for (int j = i + 1; j < limit; ++j) {
       int node_j;
       predict(set, j, &node_j);
       if (node_i == node_j) {
