@@ -36,7 +36,7 @@ RandomForest::RandomForest(const InstanceSet& set,
     }
     Tree* tree = new Tree(set, w,  K, 1, 0, rand());
     tree->grow();
-    // cout << "Grew tree " << i << endl;
+    cout << "Grew tree " << i << endl;
     trees_.push_back(tree);
   }
 }
