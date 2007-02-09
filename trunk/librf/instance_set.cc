@@ -174,6 +174,19 @@ void InstanceSet::write_csv(ostream& out, bool header,
   }
 }
 
+void InstanceSet::write_transposed_csv(ostream& out,
+                            const string& delim) {
+  assert(attributes_.size() > 0);
+  assert(attributes_[0].size() > 0);
+  for (int j = 0; j < num_attributes(); ++j) {
+    for (int i = 0; i < attributes_[0].size() - 1; ++i) {
+      out << attributes_[i][j] << delim;
+    }
+    out << attributes_[attributes_[0].size() - 1][j] << endl;
+  }
+}
+
+
 
 
 /***

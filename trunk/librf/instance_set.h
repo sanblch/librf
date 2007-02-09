@@ -82,6 +82,7 @@ class InstanceSet {
           return var_names_[i];
         }
         void write_csv(ostream& out, bool header, const string& delim);
+        void write_transposed_csv(ostream& out, const string& delim);
         //float class_entropy() const{
         //  return distribution_.entropy_over_classes();
         //}

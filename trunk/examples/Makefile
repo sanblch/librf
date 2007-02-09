@@ -76,7 +76,7 @@ VERSION = 0.1
 am__include = include
 am__quote = 
 install_sh = /home2/blee/librf/install-sh
-bin_PROGRAMS = rftrain rfpredict rfvarimport featuresel adaptivetest adaptivetrain singleclock singleclock_test singleclock_transform
+bin_PROGRAMS = rftrain rfpredict rfvarimport featuresel adaptivetest adaptivetrain singleclock singleclock_test singleclock_transform transpose
 rftrain_SOURCES = rf-train.cc
 rfpredict_SOURCES = rf-predict.cc
 rfvarimport_SOURCES = rf-varimport.cc
@@ -86,6 +86,7 @@ adaptivetrain_SOURCES = adaptivetrain.cc
 singleclock_SOURCES = single_clock.cc
 singleclock_test_SOURCES = single_clock_test.cc
 singleclock_transform_SOURCES = single_clock_transform.cc
+transpose_SOURCES = transpose.cc
 INCLUDES = -I ../librf -I ../tclap
 LIBS = -L../librf -lrf
 CXXFLAGS = -DHAVE_SSTREAM #-ggdb
@@ -96,7 +97,8 @@ CONFIG_CLEAN_FILES =
 bin_PROGRAMS = rftrain$(EXEEXT) rfpredict$(EXEEXT) rfvarimport$(EXEEXT) \
 	featuresel$(EXEEXT) adaptivetest$(EXEEXT) \
 	adaptivetrain$(EXEEXT) singleclock$(EXEEXT) \
-	singleclock_test$(EXEEXT) singleclock_transform$(EXEEXT)
+	singleclock_test$(EXEEXT) singleclock_transform$(EXEEXT) \
+	transpose$(EXEEXT)
 PROGRAMS = $(bin_PROGRAMS)
 
 am_adaptivetest_OBJECTS = adaptivetest.$(OBJEXT)
@@ -144,6 +146,11 @@ singleclock_transform_OBJECTS = $(am_singleclock_transform_OBJECTS)
 singleclock_transform_LDADD = $(LDADD)
 singleclock_transform_DEPENDENCIES =
 singleclock_transform_LDFLAGS =
+am_transpose_OBJECTS = transpose.$(OBJEXT)
+transpose_OBJECTS = $(am_transpose_OBJECTS)
+transpose_LDADD = $(LDADD)
+transpose_DEPENDENCIES =
+transpose_LDFLAGS =
 
 DEFS = -DHAVE_CONFIG_H
 DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)
@@ -158,7 +165,8 @@ DEP_FILES = ./$(DEPDIR)/adaptivetest.Po \
 	./$(DEPDIR)/rf-varimport.Po \
 	./$(DEPDIR)/single_clock.Po \
 	./$(DEPDIR)/single_clock_test.Po \
-	./$(DEPDIR)/single_clock_transform.Po
+	./$(DEPDIR)/single_clock_transform.Po \
+	./$(DEPDIR)/transpose.Po
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 CXXLD = $(CXX)
@@ -167,9 +175,10 @@ CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
 DIST_SOURCES = $(adaptivetest_SOURCES) $(adaptivetrain_SOURCES) \
 	$(featuresel_SOURCES) $(rfpredict_SOURCES) $(rftrain_SOURCES) \
 	$(rfvarimport_SOURCES) $(singleclock_SOURCES) \
-	$(singleclock_test_SOURCES) $(singleclock_transform_SOURCES)
-DIST_COMMON = README Makefile.am Makefile.in TODO
-SOURCES = $(adaptivetest_SOURCES) $(adaptivetrain_SOURCES) $(featuresel_SOURCES) $(rfpredict_SOURCES) $(rftrain_SOURCES) $(rfvarimport_SOURCES) $(singleclock_SOURCES) $(singleclock_test_SOURCES) $(singleclock_transform_SOURCES)
+	$(singleclock_test_SOURCES) $(singleclock_transform_SOURCES) \
+	$(transpose_SOURCES)
+DIST_COMMON = README Makefile.am Makefile.in
+SOURCES = $(adaptivetest_SOURCES) $(adaptivetrain_SOURCES) $(featuresel_SOURCES) $(rfpredict_SOURCES) $(rftrain_SOURCES) $(rfvarimport_SOURCES) $(singleclock_SOURCES) $(singleclock_test_SOURCES) $(singleclock_transform_SOURCES) $(transpose_SOURCES)
 
 all: all-am
 
@@ -231,6 +240,9 @@ singleclock_test$(EXEEXT): $(singleclock_test_OBJECTS) $(singleclock_test_DEPEND
 singleclock_transform$(EXEEXT): $(singleclock_transform_OBJECTS) $(singleclock_transform_DEPENDENCIES) 
 	@rm -f singleclock_transform$(EXEEXT)
 	$(CXXLINK) $(singleclock_transform_LDFLAGS) $(singleclock_transform_OBJECTS) $(singleclock_transform_LDADD) $(LIBS)
+transpose$(EXEEXT): $(transpose_OBJECTS) $(transpose_DEPENDENCIES) 
+	@rm -f transpose$(EXEEXT)
+	$(CXXLINK) $(transpose_LDFLAGS) $(transpose_OBJECTS) $(transpose_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT) core *.core
@@ -247,6 +259,7 @@ include ./$(DEPDIR)/rf-varimport.Po
 include ./$(DEPDIR)/single_clock.Po
 include ./$(DEPDIR)/single_clock_test.Po
 include ./$(DEPDIR)/single_clock_transform.Po
+include ./$(DEPDIR)/transpose.Po
 
 distclean-depend:
 	-rm -rf ./$(DEPDIR)
