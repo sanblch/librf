@@ -180,9 +180,9 @@ void InstanceSet::write_transposed_csv(ostream& out,
   assert(attributes_[0].size() > 0);
   for (int j = 0; j < num_attributes(); ++j) {
     for (int i = 0; i < attributes_[0].size() - 1; ++i) {
-      out << attributes_[i][j] << delim;
+      out << attributes_[j][i] << delim;
     }
-    out << attributes_[attributes_[0].size() - 1][j] << endl;
+    out << attributes_[j][attributes_[0].size() - 1] << endl;
   }
 }
 
