@@ -57,6 +57,12 @@ class Tree {
         int predict(const InstanceSet& set, int instance_no, int *terminal = NULL) const;
         int predict(const InstanceSet& set, int instance_no, vector<pair<int, float> >*) const;
         int terminal_node(const InstanceSet& set, int i) const;
+
+        int predict_skew(const InstanceSet& set, int instance_no, float* skew, int *terminal = NULL) const;
+        void compute_skewed_proximity(const InstanceSet& set,
+                               vector<vector<float> >* prox,
+                               bool oob,
+                               int limit) const;
         void compute_proximity(const InstanceSet& set,
                                vector<vector<float> >* prox,
                                bool oob = false, int limit = -1) const;

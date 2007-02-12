@@ -478,6 +478,40 @@ int Tree::predict(const InstanceSet& set, int instance_no, int *terminal) const 
   return label;
 }
 
+int Tree::predict_skew(const InstanceSet& set, int instance_no, float* skew,
+                       int* terminal) const {
+  //base case
+  bool result = false;
+  int cur_node = 0;
+  int label = 0;
+  (*skew) = 0;
+  int len = 0;
+  while (!result) {
+    const tree_node* n = &nodes_[cur_node];
+    assert(n->status == TERMINAL || n->status == SPLIT);
+    if (n->status == TERMINAL) {
+      result = true;
+      label = n->label;
+    } else {
+      len++;
+      if (set.get_attribute(instance_no, n->attr) < n->split_point) {
+        cur_node = n->left;
+      } else {
+        (*skew)++;
+        cur_node = n->right;
+      }
+    }
+  }
+   (*skew) = (*skew) / len;
+
+  if (terminal != NULL) {
+    *terminal = cur_node;
+  }
+  return label;
+}
+
+
+
 
 /***
  * Special logging predict method
@@ -613,6 +647,7 @@ bool Tree::oob(int instance_no) const {
   return ((*weight_list_)[instance_no] == 0);
 }
 
+
 void Tree::compute_proximity(const InstanceSet& set,
                                vector<vector<float> >* prox,
                                bool oob,
@@ -622,15 +657,50 @@ void Tree::compute_proximity(const InstanceSet& set,
   if (limit == -1) { // default sentinel value
     limit = set.size();
   }
+  vector<int> nodes;
   for (int i = 0; i < limit; ++i) {
     int node_i;
     predict(set, i, &node_i);
+    nodes.push_back(node_i);
+  }
+  for (int i = 0; i < limit; ++i) {
+    int node_i = nodes[i];
     for (int j = i + 1; j < limit; ++j) {
-      int node_j;
-      predict(set, j, &node_j);
-      if (node_i == node_j) {
+      if (node_i == nodes[j]) {
         (*prox)[i][j] += 1.0;
         (*prox)[j][i] += 1.0;
+      }
+    }
+  }
+}
+
+
+
+void Tree::compute_skewed_proximity(const InstanceSet& set,
+                               vector<vector<float> >* prox,
+                               bool oob,
+                               int limit) const{
+  // Limit is useful for unsupervised case
+  // No need to calculate proximity for synthetic test set
+  if (limit == -1) { // default sentinel value
+    limit = set.size();
+  }
+  vector<int> nodes;
+  vector<float> skews;
+  for (int i = 0; i < limit; ++i) {
+      int node_i;
+      float skew;
+      predict_skew(set, i, &skew, &node_i);
+      nodes.push_back(node_i);
+      skews.push_back(skew);
+  }
+  for (int i = 0; i < limit; ++i) {
+    int node_i = nodes[i];
+    for (int j = i + 1; j < limit; ++j) {
+      int node_j = nodes[j];
+      if (node_i == node_j) {
+        (*prox)[i][j] += skews[i];
+        (*prox)[j][i] += skews[i];
       }
     }
   }

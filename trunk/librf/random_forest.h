@@ -76,6 +76,10 @@ class RandomForest {
      void compute_proximity(const InstanceSet& set,
                             vector<vector<float> >* prox,
                             int limit = -1) const;
+    void compute_skewed_proximity(const InstanceSet& set,
+                            vector<vector<float> >* prox,
+                            int limit = -1) const;
+
 
      void compute_outliers(const InstanceSet& set, int label,
                            const vector<vector<float> >& mat,
