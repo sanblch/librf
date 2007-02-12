@@ -140,6 +140,21 @@ void RandomForest::reliability_diagram(int bins,
   }
 }
 
+void RandomForest::compute_skewed_proximity(const InstanceSet& set,
+                            vector<vector<float> >* prox,
+                            int limit) const {
+  for (int i = 0; i < trees_.size(); ++i) {
+    trees_[i]->compute_skewed_proximity(set, prox, false, limit);
+  }
+  for (int i = 0; i < prox->size(); ++i) {
+    for ( int j = 0; j < prox->size(); ++j) {
+        (*prox)[i][j]/= trees_.size();
+    }
+  }
+}
+
+
+
 void RandomForest::compute_proximity(const InstanceSet& set,
                             vector<vector<float> >* prox,
                             int limit) const {
