@@ -1,0 +1,24 @@
+TRAINING:
+
+This is how to train a random forest from training data and save the model to disk.
+Currently, the default is libSVM format -- but a CSV format with optional header, and special delimeter can be used.
+
+USAGE: 
+   ./rftrain  [-p <probs>] [-k <int>] [-t <int>] -m <rfmodel> -d
+              <trainingdata> [-f <int>] [-l <labels>] [--csv] [--header]
+              [--delim <delimiter>] [--importance] [--] [--version] [-h]
+
+CSV EXAMPLE:
+./rftrain -t 100 -m heart.model -d ../data/heart.csv --header --csv -l ../data/heart_labels.txt 
+Note: -- for CSV data - there needs to be a labels file specified.
+
+ -p <probfile>-- outputs out-of-bag probabilities for each instance to
+ <probfile>
+ -k <int> -- number of variables to try at each split 
+
+libSVM EXAMPLE:
+libsvm is inconvenient because the number of features needs to be specified
+./rftrain -t 100 -m heart.model -d ../data/heart.svm -f 14
+
+PREDICTION:
+
