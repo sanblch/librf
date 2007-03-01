@@ -1,0 +1,15 @@
+bin_PROGRAMS =  rftrain rfpredict rfvarimport featuresel adaptivetest adaptivetrain singleclock singleclock_test singleclock_transform transpose
+rftrain_SOURCES = rf-train.cc
+rfpredict_SOURCES = rf-predict.cc
+rfvarimport_SOURCES = rf-varimport.cc
+featuresel_SOURCES = rf-featuresel.cc
+adaptivetest_SOURCES = adaptivetest.cc
+adaptivetrain_SOURCES = adaptivetrain.cc
+singleclock_SOURCES = single_clock.cc
+singleclock_test_SOURCES = single_clock_test.cc
+singleclock_transform_SOURCES = single_clock_transform.cc
+transpose_SOURCES = transpose.cc
+INCLUDES =  -I ../librf -I ../tclap
+LIBS =  -L../librf -lrf
+CXXFLAGS = -DHAVE_SSTREAM #-ggdb
+#CXXFLAGS = -DHAVE_SSTREAM -ggdb 
