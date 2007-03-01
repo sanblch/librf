@@ -38,10 +38,10 @@ pkglibdir = $(libdir)/librf
 pkgincludedir = $(includedir)/librf
 top_builddir = ..
 
-ACLOCAL = ${SHELL} /home2/blee/librf/missing --run aclocal-1.6
-AUTOCONF = ${SHELL} /home2/blee/librf/missing --run autoconf
-AUTOMAKE = ${SHELL} /home2/blee/librf/missing --run automake-1.6
-AUTOHEADER = ${SHELL} /home2/blee/librf/missing --run autoheader
+ACLOCAL = ${SHELL} /home2/blee/clean/librf/missing --run aclocal-1.6
+AUTOCONF = ${SHELL} /home2/blee/clean/librf/missing --run autoconf
+AUTOMAKE = ${SHELL} /home2/blee/clean/librf/missing --run automake-1.6
+AUTOHEADER = ${SHELL} /home2/blee/clean/librf/missing --run autoheader
 
 am__cd = CDPATH="$${ZSH_VERSION+.}$(PATH_SEPARATOR)" && cd
 INSTALL = /usr/bin/install -c
@@ -63,7 +63,7 @@ POST_UNINSTALL = :
 EXEEXT = 
 OBJEXT = o
 PATH_SEPARATOR = :
-AMTAR = ${SHELL} /home2/blee/librf/missing --run tar
+AMTAR = ${SHELL} /home2/blee/clean/librf/missing --run tar
 AWK = gawk
 CC = gcc
 CXX = g++
@@ -75,18 +75,11 @@ STRIP =
 VERSION = 0.1
 am__include = include
 am__quote = 
-install_sh = /home2/blee/librf/install-sh
-bin_PROGRAMS = rftrain rfpredict rfvarimport featuresel adaptivetest adaptivetrain singleclock singleclock_test singleclock_transform transpose
+install_sh = /home2/blee/clean/librf/install-sh
+bin_PROGRAMS = rftrain rfpredict featuresel
 rftrain_SOURCES = rf-train.cc
 rfpredict_SOURCES = rf-predict.cc
-rfvarimport_SOURCES = rf-varimport.cc
 featuresel_SOURCES = rf-featuresel.cc
-adaptivetest_SOURCES = adaptivetest.cc
-adaptivetrain_SOURCES = adaptivetrain.cc
-singleclock_SOURCES = single_clock.cc
-singleclock_test_SOURCES = single_clock_test.cc
-singleclock_transform_SOURCES = single_clock_transform.cc
-transpose_SOURCES = transpose.cc
 INCLUDES = -I ../librf -I ../tclap
 LIBS = -L../librf -lrf
 CXXFLAGS = -DHAVE_SSTREAM #-ggdb
@@ -94,23 +87,9 @@ subdir = examples
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
-bin_PROGRAMS = rftrain$(EXEEXT) rfpredict$(EXEEXT) rfvarimport$(EXEEXT) \
-	featuresel$(EXEEXT) adaptivetest$(EXEEXT) \
-	adaptivetrain$(EXEEXT) singleclock$(EXEEXT) \
-	singleclock_test$(EXEEXT) singleclock_transform$(EXEEXT) \
-	transpose$(EXEEXT)
+bin_PROGRAMS = rftrain$(EXEEXT) rfpredict$(EXEEXT) featuresel$(EXEEXT)
 PROGRAMS = $(bin_PROGRAMS)
 
-am_adaptivetest_OBJECTS = adaptivetest.$(OBJEXT)
-adaptivetest_OBJECTS = $(am_adaptivetest_OBJECTS)
-adaptivetest_LDADD = $(LDADD)
-adaptivetest_DEPENDENCIES =
-adaptivetest_LDFLAGS =
-am_adaptivetrain_OBJECTS = adaptivetrain.$(OBJEXT)
-adaptivetrain_OBJECTS = $(am_adaptivetrain_OBJECTS)
-adaptivetrain_LDADD = $(LDADD)
-adaptivetrain_DEPENDENCIES =
-adaptivetrain_LDFLAGS =
 am_featuresel_OBJECTS = rf-featuresel.$(OBJEXT)
 featuresel_OBJECTS = $(am_featuresel_OBJECTS)
 featuresel_LDADD = $(LDADD)
@@ -126,31 +105,6 @@ rftrain_OBJECTS = $(am_rftrain_OBJECTS)
 rftrain_LDADD = $(LDADD)
 rftrain_DEPENDENCIES =
 rftrain_LDFLAGS =
-am_rfvarimport_OBJECTS = rf-varimport.$(OBJEXT)
-rfvarimport_OBJECTS = $(am_rfvarimport_OBJECTS)
-rfvarimport_LDADD = $(LDADD)
-rfvarimport_DEPENDENCIES =
-rfvarimport_LDFLAGS =
-am_singleclock_OBJECTS = single_clock.$(OBJEXT)
-singleclock_OBJECTS = $(am_singleclock_OBJECTS)
-singleclock_LDADD = $(LDADD)
-singleclock_DEPENDENCIES =
-singleclock_LDFLAGS =
-am_singleclock_test_OBJECTS = single_clock_test.$(OBJEXT)
-singleclock_test_OBJECTS = $(am_singleclock_test_OBJECTS)
-singleclock_test_LDADD = $(LDADD)
-singleclock_test_DEPENDENCIES =
-singleclock_test_LDFLAGS =
-am_singleclock_transform_OBJECTS = single_clock_transform.$(OBJEXT)
-singleclock_transform_OBJECTS = $(am_singleclock_transform_OBJECTS)
-singleclock_transform_LDADD = $(LDADD)
-singleclock_transform_DEPENDENCIES =
-singleclock_transform_LDFLAGS =
-am_transpose_OBJECTS = transpose.$(OBJEXT)
-transpose_OBJECTS = $(am_transpose_OBJECTS)
-transpose_LDADD = $(LDADD)
-transpose_DEPENDENCIES =
-transpose_LDFLAGS =
 
 DEFS = -DHAVE_CONFIG_H
 DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)
@@ -158,27 +112,17 @@ CPPFLAGS =
 LDFLAGS = 
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
-DEP_FILES = ./$(DEPDIR)/adaptivetest.Po \
-	./$(DEPDIR)/adaptivetrain.Po \
-	./$(DEPDIR)/rf-featuresel.Po \
-	./$(DEPDIR)/rf-predict.Po ./$(DEPDIR)/rf-train.Po \
-	./$(DEPDIR)/rf-varimport.Po \
-	./$(DEPDIR)/single_clock.Po \
-	./$(DEPDIR)/single_clock_test.Po \
-	./$(DEPDIR)/single_clock_transform.Po \
-	./$(DEPDIR)/transpose.Po
+DEP_FILES = ./$(DEPDIR)/rf-featuresel.Po \
+	./$(DEPDIR)/rf-predict.Po ./$(DEPDIR)/rf-train.Po
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 CXXLD = $(CXX)
 CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
 	-o $@
-DIST_SOURCES = $(adaptivetest_SOURCES) $(adaptivetrain_SOURCES) \
-	$(featuresel_SOURCES) $(rfpredict_SOURCES) $(rftrain_SOURCES) \
-	$(rfvarimport_SOURCES) $(singleclock_SOURCES) \
-	$(singleclock_test_SOURCES) $(singleclock_transform_SOURCES) \
-	$(transpose_SOURCES)
+DIST_SOURCES = $(featuresel_SOURCES) $(rfpredict_SOURCES) \
+	$(rftrain_SOURCES)
 DIST_COMMON = README Makefile.am Makefile.in
-SOURCES = $(adaptivetest_SOURCES) $(adaptivetrain_SOURCES) $(featuresel_SOURCES) $(rfpredict_SOURCES) $(rftrain_SOURCES) $(rfvarimport_SOURCES) $(singleclock_SOURCES) $(singleclock_test_SOURCES) $(singleclock_transform_SOURCES) $(transpose_SOURCES)
+SOURCES = $(featuresel_SOURCES) $(rfpredict_SOURCES) $(rftrain_SOURCES)
 
 all: all-am
 
@@ -213,12 +157,6 @@ uninstall-binPROGRAMS:
 
 clean-binPROGRAMS:
 	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
-adaptivetest$(EXEEXT): $(adaptivetest_OBJECTS) $(adaptivetest_DEPENDENCIES) 
-	@rm -f adaptivetest$(EXEEXT)
-	$(CXXLINK) $(adaptivetest_LDFLAGS) $(adaptivetest_OBJECTS) $(adaptivetest_LDADD) $(LIBS)
-adaptivetrain$(EXEEXT): $(adaptivetrain_OBJECTS) $(adaptivetrain_DEPENDENCIES) 
-	@rm -f adaptivetrain$(EXEEXT)
-	$(CXXLINK) $(adaptivetrain_LDFLAGS) $(adaptivetrain_OBJECTS) $(adaptivetrain_LDADD) $(LIBS)
 featuresel$(EXEEXT): $(featuresel_OBJECTS) $(featuresel_DEPENDENCIES) 
 	@rm -f featuresel$(EXEEXT)
 	$(CXXLINK) $(featuresel_LDFLAGS) $(featuresel_OBJECTS) $(featuresel_LDADD) $(LIBS)
@@ -228,21 +166,6 @@ rfpredict$(EXEEXT): $(rfpredict_OBJECTS) $(rfpredict_DEPENDENCIES)
 rftrain$(EXEEXT): $(rftrain_OBJECTS) $(rftrain_DEPENDENCIES) 
 	@rm -f rftrain$(EXEEXT)
 	$(CXXLINK) $(rftrain_LDFLAGS) $(rftrain_OBJECTS) $(rftrain_LDADD) $(LIBS)
-rfvarimport$(EXEEXT): $(rfvarimport_OBJECTS) $(rfvarimport_DEPENDENCIES) 
-	@rm -f rfvarimport$(EXEEXT)
-	$(CXXLINK) $(rfvarimport_LDFLAGS) $(rfvarimport_OBJECTS) $(rfvarimport_LDADD) $(LIBS)
-singleclock$(EXEEXT): $(singleclock_OBJECTS) $(singleclock_DEPENDENCIES) 
-	@rm -f singleclock$(EXEEXT)
-	$(CXXLINK) $(singleclock_LDFLAGS) $(singleclock_OBJECTS) $(singleclock_LDADD) $(LIBS)
-singleclock_test$(EXEEXT): $(singleclock_test_OBJECTS) $(singleclock_test_DEPENDENCIES) 
-	@rm -f singleclock_test$(EXEEXT)
-	$(CXXLINK) $(singleclock_test_LDFLAGS) $(singleclock_test_OBJECTS) $(singleclock_test_LDADD) $(LIBS)
-singleclock_transform$(EXEEXT): $(singleclock_transform_OBJECTS) $(singleclock_transform_DEPENDENCIES) 
-	@rm -f singleclock_transform$(EXEEXT)
-	$(CXXLINK) $(singleclock_transform_LDFLAGS) $(singleclock_transform_OBJECTS) $(singleclock_transform_LDADD) $(LIBS)
-transpose$(EXEEXT): $(transpose_OBJECTS) $(transpose_DEPENDENCIES) 
-	@rm -f transpose$(EXEEXT)
-	$(CXXLINK) $(transpose_LDFLAGS) $(transpose_OBJECTS) $(transpose_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT) core *.core
@@ -250,16 +173,9 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-include ./$(DEPDIR)/adaptivetest.Po
-include ./$(DEPDIR)/adaptivetrain.Po
 include ./$(DEPDIR)/rf-featuresel.Po
 include ./$(DEPDIR)/rf-predict.Po
 include ./$(DEPDIR)/rf-train.Po
-include ./$(DEPDIR)/rf-varimport.Po
-include ./$(DEPDIR)/single_clock.Po
-include ./$(DEPDIR)/single_clock_test.Po
-include ./$(DEPDIR)/single_clock_transform.Po
-include ./$(DEPDIR)/transpose.Po
 
 distclean-depend:
 	-rm -rf ./$(DEPDIR)
