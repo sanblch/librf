@@ -12,7 +12,6 @@ using namespace std;
 
 namespace librf {
 class DiscreteDist;
-class Instance;
 class InstanceSet;
 class Tree;
 /**

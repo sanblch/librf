@@ -11,7 +11,6 @@
 #include <string>
 #include <vector>
 #include <fstream>
-#include "librf/instance.h"
 #include "librf/discrete_dist.h"
 
 using namespace std;
@@ -41,9 +40,6 @@ class InstanceSet {
                                                     const string& labels,
                                                     bool header = false,
                                                     const string& delim =",");
-        /// Load from a libsvm formatted file
-        static InstanceSet* load_libsvm(const string& data,
-                                            int num_features);
         /// copy a variable array out 
         void save_var(int var, vector<float> *target);
         /// load a variable array in
@@ -105,7 +101,6 @@ class InstanceSet {
         void create_dummy_var_names(int n);
         void sort_attribute(const vector<float>&attribute, vector<int>*indices);
         DiscreteDist distribution_;
-        vector<Instance> instances_;
         // List of Attribute Lists
         // Thus access is attributes_ [attribute] [ instance]
         vector< vector<float> > attributes_;
