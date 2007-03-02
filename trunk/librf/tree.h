@@ -21,7 +21,6 @@ namespace librf {
 class InstanceSet;
 class weight_list;
 class DiscreteDist;
-class Instance;
 
 /**
  * @brief
@@ -51,8 +50,6 @@ class Tree {
              int K, int min_size = 1,
              float min_gain = 0, unsigned int seed =0);
          ~Tree();  // clean up 
-        /// predict a new instance
-        int predict(const Instance& c) const;
         /// predict an instance from a set
         int predict(const InstanceSet& set, int instance_no, int *terminal = NULL) const;
         int predict(const InstanceSet& set, int instance_no, vector<pair<int, float> >*) const;

@@ -2,6 +2,7 @@
 #include <fstream>
 #include <string>
 #include <iostream>
+#include <sstream>
 #include <float.h>
 #include "librf/weights.h"
 #include "librf/types.h"
@@ -51,16 +52,6 @@ InstanceSet* InstanceSet::create_subset(const InstanceSet& set,
                                      const weight_list& wl) {
   return new InstanceSet(set, wl);
 }
-
-/**
- * Named constructor for loading from a .libsvm format
- * @param data filename 
- * @param nf number of features (makes life easier to specify this)
- */
-InstanceSet* InstanceSet::load_libsvm(const string& data, int nf) {
-  return new InstanceSet(data, nf);
-}
-
 /***
  * Unnamed private constructor for loading csv file/label file
  */
@@ -232,33 +223,6 @@ void InstanceSet::create_dummy_var_names(int n) {
     var_names_.push_back(ss.str());
   }
 }
-
-/**
- * Private constructor for creating an instance set
- * from a libsvm file
- *
- */
-InstanceSet::InstanceSet(const string& filename, int num_features) : attributes_(num_features) {
-  ifstream in(filename.c_str());
-  string line;
-  while(getline(in,line)) {
-    Instance i(line, num_features);
-    labels_.push_back(i.true_label);
-    distribution_.add(i.true_label);
-    // Add features into attributes list
-    for (int j = 0; j < num_features; ++j) {
-      attributes_[j].push_back(i.features_[j]);
-    }
-  }
-  // cout << "InstanceSet Distribution:" << endl;
-  // distribution_.print();
-  // cout << "Sorting indices " << endl;
-  // libsvm files do not have variable names
-  create_dummy_var_names(num_features);
-  create_sorted_indices();
-  // cout << "Instance Set loaded. " << endl;
-}
-
 void InstanceSet::create_sorted_indices() {
     // allocate sorted_indices_
     sorted_indices_.resize(attributes_.size());

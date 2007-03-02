@@ -8,48 +8,12 @@
 #include <fstream>
 using namespace std;
 
-struct TreeFixture {
-	// Do some Setup
-	TreeFixture() {
-    // Load example libSVM file
-		is_ = new InstanceSet("data/tree.svm",3);
-	}
-	// Do some Teardown
-	~TreeFixture() {
-		delete is_;
-	}
-		InstanceSet *is_;
-};
-
-TEST_FIXTURE(TreeFixture, TrainCheck)
-{
-	// Make sure the file loaded properly
-	 CHECK_EQUAL(is_->size(), 8);
-
-   weight_list *weights2 = new weight_list(8,8);
-   for (int i = 0; i < 8; ++i) {
-     weights2->add(i);
-   }
-   Tree tree(*is_, weights2, 12);
-   tree.grow();
-   tree.print();
-   cout << "running prediction on training set" <<endl;
-   cout << tree.training_accuracy() << endl;
-}
-/*  Instance i1("-1 0:1 1:1 2:-1", 3);
-  Instance i2("+1 0:1 1:-1 2:-1", 3);
-  cout << "------predictions--------" << endl;
-  cout << int(tree->predict(i1)) << endl;
-  cout << int(tree->predict(i2)) << endl;
-  cout << "running prediction on training set" <<endl;
-}
-/*/
 struct TreeFixtureBig {
 	// Do some Setup
 	TreeFixtureBig() {
-    // Load example libSVM file
     cout << "Loading large instance set" <<endl;
-		is_ = new InstanceSet("data/heart.svm", 14);
+		is_ = new InstanceSet::load_csv_and_labels("../data/heart.csv",
+                                               "../data/heart_labels.txt",true);
     cout << "Loading Done";
 	}
 	// Do some Teardown
