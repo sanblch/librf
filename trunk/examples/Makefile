@@ -38,10 +38,10 @@ pkglibdir = $(libdir)/librf
 pkgincludedir = $(includedir)/librf
 top_builddir = ..
 
-ACLOCAL = ${SHELL} /home2/blee/clean/librf/missing --run aclocal-1.6
-AUTOCONF = ${SHELL} /home2/blee/clean/librf/missing --run autoconf
-AUTOMAKE = ${SHELL} /home2/blee/clean/librf/missing --run automake-1.6
-AUTOHEADER = ${SHELL} /home2/blee/clean/librf/missing --run autoheader
+ACLOCAL = ${SHELL} /home/blee/fix/librf/missing --run aclocal-1.6
+AUTOCONF = ${SHELL} /home/blee/fix/librf/missing --run autoconf
+AUTOMAKE = ${SHELL} /home/blee/fix/librf/missing --run automake-1.6
+AUTOHEADER = ${SHELL} /home/blee/fix/librf/missing --run autoheader
 
 am__cd = CDPATH="$${ZSH_VERSION+.}$(PATH_SEPARATOR)" && cd
 INSTALL = /usr/bin/install -c
@@ -63,7 +63,7 @@ POST_UNINSTALL = :
 EXEEXT = 
 OBJEXT = o
 PATH_SEPARATOR = :
-AMTAR = ${SHELL} /home2/blee/clean/librf/missing --run tar
+AMTAR = ${SHELL} /home/blee/fix/librf/missing --run tar
 AWK = gawk
 CC = gcc
 CXX = g++
@@ -75,7 +75,7 @@ STRIP =
 VERSION = 0.1
 am__include = include
 am__quote = 
-install_sh = /home2/blee/clean/librf/install-sh
+install_sh = /home/blee/fix/librf/install-sh
 bin_PROGRAMS = rftrain rfpredict featuresel
 rftrain_SOURCES = rf-train.cc
 rfpredict_SOURCES = rf-predict.cc

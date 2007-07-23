@@ -6,14 +6,18 @@
 #include <stdlib.h>
 
 namespace librf {
-
+/// Sample without replacment
+// Fix provided by naoki.tanaka@naoki.tanaka@jp.astellas.com
 void random_sample(int n, int K, vector<int>*v, unsigned int* seed) {
   if (K < n) {
   int pop = n;
   v->reserve(K);
   for (int i = K; i > 0; --i) {
     float cumprob = 1.0;
-    float x = float(rand_r(seed))/RAND_MAX;
+    float x;
+    do {
+      x = float(rand_r(seed))/RAND_MAX;
+    } while (x == 1);
     for (; x < cumprob; pop--) {
       cumprob -= cumprob * i /pop;
     }
